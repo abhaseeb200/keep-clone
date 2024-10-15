@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotesController;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function () {
+    return response()->json(['message' => 'Welcome']);
+});
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notes', [NotesController::class, 'index']);
+    Route::post('/notes', [NotesController::class, 'store']);
+    Route::get('/notes/{id}', [NotesController::class, 'show']);
+    Route::put('/notes/{id}', [NotesController::class, 'update']);
+    Route::delete('/notes/{id}', [NotesController::class, 'destroy']);
 });
