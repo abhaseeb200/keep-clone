@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import api from "../../../config/api";
-import Input from "../../components/Input";
-import Button from "../../components/Button";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
+// import api from "../../../config/api";
 
 const EditIcon = ({ onClick }) => {
     return (

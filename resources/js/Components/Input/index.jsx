@@ -1,5 +1,4 @@
 import React from "react";
-import "./style.css";
 
 function Input({
     placeholder,
@@ -11,16 +10,15 @@ function Input({
     validation = () => {},
 }) {
     return (
-        <div className="wrapper-input">
-            <label className="labels">{label}</label>
+        <div className="flex flex-col gap-1">
+            <label className="uppercase text-xs font-medium">{label}</label>
             <input
-                className="inputs"
+                className="box-border p-3 rounded-md outline-none border border-gray-400"
                 placeholder={placeholder}
-                label={label}
                 {...register(name, validation)}
                 defaultValue={defaultValue}
             />
-            {errors && <span className="errors">{errors[name]?.message}</span>}
+            {errors && <span className="text-red-500 text-xs">{errors[name]?.message}</span>}
         </div>
     );
 }
