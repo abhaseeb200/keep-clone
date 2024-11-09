@@ -3,9 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Input from "@/Components/Input";
 import Button from "@/Components/Button";
+import AuthLayout from "@/Layouts/AuthLayout";
+import api from "@/Config/api";
 
-function SignUp() {
+function ForgotPassword() {
     const navigate = useNavigate();
+
     const {
         register,
         handleSubmit,
@@ -14,11 +17,11 @@ function SignUp() {
 
     const onSubmit = async (data) => {
         try {
-            const response = await api.post("/login", data);
-            localStorage.setItem("auth", JSON.stringify({ ...response?.data }));
-            navigate("/dashboard");
+            // const response = await api.post("/login", data);
+            // localStorage.setItem("auth", JSON.stringify({ ...response?.data }));
+            // navigate("/dashboard");
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -45,29 +48,12 @@ function SignUp() {
                     errors={errors}
                     defaultValue="john.doe3@example.com"
                 />
-                <Input
-                    label="Your Password"
-                    placeholder="Password"
-                    name="password"
-                    register={register}
-                    validation={{ required: "Password is required" }}
-                    errors={errors}
-                    defaultValue="password123"
-                />
-                <Input
-                    type="password"
-                    label="Confirm Password"
-                    placeholder="Confirm Password"
-                    name="confirm-password"
-                    register={register}
-                    validation={{ required: "Password is required" }}
-                    errors={errors}
-                    defaultValue="password123"
-                />
-                <Button title="Sign Up" />
+
+                <Button title="Send Email" type="submit" />
+
                 <Link to="/">
                     <div className="font-bold text-center cursor-pointer">
-                        Already have an account
+                        Back To Login
                     </div>
                 </Link>
             </form>
@@ -75,4 +61,4 @@ function SignUp() {
     );
 }
 
-export default SignUp;
+export default ForgotPassword;
