@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
+import { useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
+import Masonry from "react-responsive-masonry";
 import {
     ArchivedIcon,
     ColorIcon,
@@ -10,156 +10,69 @@ import {
     LabelIcon,
     PinIcon,
 } from "@/Components/Icons";
-import useClickOutside from "@/Hooks/useClickOutside";
 import Card from "@/Components/Card";
-import Masonry from "react-responsive-masonry";
-// import api from "../../../config/api";
-
-const noteData = [
-    {
-        title: "One Title",
-        description:
-            "This is content here This is content here This is content here This is content here This is content here This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        description:
-            "This is here This is content here This is content here This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-    {
-        title: "One Title",
-        description: "This is content here...",
-        labels: [{ title: "One" }, { title: "Two" }],
-    },
-];
+import useClickOutside from "@/Hooks/useClickOutside";
+import useNotes from "@/Hooks/useNotes";
 
 function Dashboard() {
-    const [notes, setNotes] = useState([]);
     const [isUpdate, setIsUpdate] = useState(false);
     const [isMoreField, setIsMoreField] = useState(false);
+
     const containerRef = useRef(null);
+    const [selectedData, setSelectedData] = useOutletContext();
+    const { notes } = useSelector((state) => state?.note);
+
+    const { getNotes, createNote, updateNote } = useNotes();
 
     useClickOutside(containerRef, () => setIsMoreField(false));
 
-    const authData = JSON.parse(localStorage.getItem("auth"));
+    useEffect(() => {
+        async function fetchNotes() {
+            await getNotes();
+        }
+        fetchNotes();
+    }, []);
 
     const {
         register,
         handleSubmit,
-        setValue,
         reset,
         formState: { errors },
     } = useForm();
 
     const onSubmit = async (data) => {
-        try {
-            if (isUpdate) {
-                handleUpdate(data);
-            } else {
-                handleAdd(data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        await createNote(data);
+        // if (isUpdate) {
+        //     await updateNote(data);
+        // }
     };
 
-    const fetchNotes = async () => {
-        try {
-            const response = await api.get("/notes");
-            setNotes(response?.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleDelete = async (id) => {
-        try {
-            const response = await api.delete(`/notes/${id}`);
-            let updatedNotes = notes?.filter((i) => i?.id !== id);
-            setNotes(updatedNotes);
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleEdit = (data) => {
-        setIsUpdate(true);
-        Object.keys(data).forEach((key) => {
-            setValue(key, data[key]);
-        });
-    };
-
-    const handleUpdate = async (data) => {
-        try {
-            const response = await api.put(`/notes/${data?.id}`, data);
-            let findIndex = notes.findIndex((i) => i?.id == data?.id);
-            if (findIndex !== -1) {
-                notes[findIndex] = response?.data.data;
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleAdd = async (data) => {
-        try {
-            const response = await api.post(`/notes`, data);
-            let updatedNotes = [response?.data?.data, ...notes];
-            setNotes(updatedNotes);
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleCancel = () => {
-        setIsUpdate(false);
+    const handleClose = (e) => {
+        e.stopPropagation();
+        setIsMoreField(false);
         reset();
     };
 
-    useEffect(() => {
-        fetchNotes();
-    }, []);
+    const handleOnSelect = (index) => {
+        let findSelected = selectedData.find((item) => item == index);
+        let dublicate = [...selectedData];
+
+        //greater than or equal to zero. should be removed after the api data
+        if (findSelected >= 0) {
+            dublicate = selectedData.filter((i) => i !== findSelected);
+        } else {
+            dublicate.push(index);
+        }
+
+        setSelectedData(dublicate);
+    };
 
     return (
         <div className="mt-8">
             <form
                 className="mb-8 rounded-lg shadow-lg bg-white max-w-2xl mx-auto"
                 ref={containerRef}
+                onSubmit={handleSubmit(onSubmit)}
                 onClick={() => setIsMoreField(true)}
             >
                 {/* ============== TITLE ============== */}
@@ -171,12 +84,11 @@ function Dashboard() {
                     <input
                         name="title"
                         className="bg-transparent outline-none w-full"
-                        register={register}
-                        validation={{
-                            required: "Title is required",
-                        }}
                         placeholder="Title"
                         errors={errors}
+                        {...register("title", {
+                            required: "Title is required",
+                        })}
                     />
                     <PinIcon />
                 </div>
@@ -184,11 +96,11 @@ function Dashboard() {
                 {/* ============== DESCRIPTION ============== */}
                 <div className="flex justify-between box-border px-4 py-3 rounded-md outline-none">
                     <input
-                        name="note"
+                        name="content"
                         className="bg-transparent outline-none w-full"
-                        register={register}
                         placeholder="Take a note"
                         errors={errors}
+                        {...register("content")}
                     />
                     {!isMoreField && (
                         <ImageIcon className="cursor-pointer opacity-70 hover:bg-gray-200 size-10 rounded-full p-2" />
@@ -209,27 +121,33 @@ function Dashboard() {
                     </div>
 
                     <div className="flex gap-2 items-center">
-                        <span
+                        <button
                             className="hover:bg-gray-100 cursor-pointer px-3 py-2"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsMoreField(false);
-                            }}
+                            type="button"
+                            onClick={handleClose}
                         >
                             Close
-                        </span>
-                        <span className="hover:bg-gray-100 px-3 cursor-pointer py-2">
+                        </button>
+                        <button
+                            type="submit"
+                            className="hover:bg-gray-100 px-3 cursor-pointer py-2"
+                        >
                             Save
-                        </span>
+                        </button>
                     </div>
                 </div>
             </form>
 
-            {/* <Card /> */}
+            {/* ============== MASONRY NOTES CARDS ============== */}
             <div className="flex flex-wrap">
                 <Masonry columnsCount={4} gutter="8px">
-                    {noteData.map((note, index) => (
-                        <Card data={note} index={index} />
+                    {notes.map((note, index) => (
+                        <Card
+                            data={note}
+                            key={index}
+                            index={index}
+                            handleOnSelect={handleOnSelect}
+                        />
                     ))}
                 </Masonry>
             </div>
