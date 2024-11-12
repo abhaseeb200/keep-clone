@@ -8,11 +8,23 @@ import {
     TickIcon,
 } from "@/Components/Icons";
 
-const Card = ({ data, index }) => {
+const Card = ({ data, index, handleOnSelect, selectedData }) => {
+
     return (
-        <div className="group border border-gray-200 p-3 bg-white rounded-lg relative hover:shadow-lg">
+        <div
+            className={`${
+                selectedData?.includes(index)
+                    ? "border-gray-900"
+                    : "border-gray-200"
+            } group w-full border p-3 bg-white rounded-lg relative hover:shadow-lg`}
+        >
             {/* ============= SELECTED ICON =============*/}
-            <TickIcon className="absolute -top-2 -left-2 show-on-hover" />
+            <TickIcon
+                className={`${
+                    selectedData?.includes(index) ? "flex" : "show-on-hover"
+                } absolute -top-2 -left-2 cursor-pointer`}
+                onClick={() => handleOnSelect(index)}
+            />
 
             {/* ============= CONTENT =============*/}
             <div>
