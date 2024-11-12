@@ -1,18 +1,19 @@
 import axios from "axios";
+import { store } from "../Config/store";
 
-const api = axios.create({
+const API = axios.create({
     baseURL: "http://127.0.0.1:8000/api",
     headers: {
         "Content-Type": "application/json",
     },
 });
 
-api.interceptors.request.use(
+API.interceptors.request.use(
     (config) => {
-        const auth = JSON.parse(localStorage.getItem("auth"));
-        
-        if (auth?.access_token) {
-            config.headers["Authorization"] = `Bearer ${auth?.access_token}`;
+        const { access_token, token_type } = store?.getState()?.auth;
+
+        if (access_token) {
+            config.headers["Authorization"] = `${token_type} ${access_token}`;
         }
         return config;
     },
@@ -21,4 +22,4 @@ api.interceptors.request.use(
     }
 );
 
-export default api;
+export default API;
