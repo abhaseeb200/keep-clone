@@ -30,16 +30,16 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notes', [NotesController::class, 'index']);
     Route::get('/search', [NotesController::class, 'search']);
-    Route::post('/notes', [NotesController::class, 'store']);
-    Route::get('/notes/{id}', [NotesController::class, 'show']);
-    Route::put('/notes/{id}', [NotesController::class, 'update']);
-    Route::delete('/notes/{id}', [NotesController::class, 'destroy']);
+    Route::post('/note', [NotesController::class, 'store']);
+    Route::get('/note/{id}', [NotesController::class, 'show']);
+    Route::put('/note/{id}', [NotesController::class, 'update']);
+    Route::delete('/note/{id}', [NotesController::class, 'destroy']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/labels', [LabelController::class, 'index']);
-    Route::post('/labels', [LabelController::class, 'store']);
-    Route::get('/labels/{id}', [LabelController::class, 'show']);
-    Route::put('/labels/{id}', [LabelController::class, 'update']);
-    Route::delete('/labels/{id}', [LabelController::class, 'destroy']);
+    Route::post('/label', [LabelController::class, 'store']);
+    Route::get('/label/{id}', [LabelController::class, 'show']);
+    Route::put('/label/{id}', [LabelController::class, 'update']);
+    Route::delete('/label/{id}', [LabelController::class, 'destroy']);
 });
