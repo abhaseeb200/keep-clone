@@ -79,10 +79,11 @@ export const LabelIcon = ({ className }) => {
     );
 };
 
-export const TickIcon = ({ className }) => {
+export const TickIcon = ({ className, onClick }) => {
     return (
         <svg
             className={className}
+            onClick={onClick}
             width="24px"
             height="24px"
             viewBox="0 0 24 24"
@@ -107,10 +108,11 @@ export const TickIcon = ({ className }) => {
     );
 };
 
-export const CrossIcon = ({ className }) => {
+export const CrossIcon = ({ className, onClick }) => {
     return (
         <svg
             className={className}
+            onClick={onClick}
             height="18px"
             width="18px"
             xmlns="http://www.w3.org/2000/svg"
@@ -119,6 +121,24 @@ export const CrossIcon = ({ className }) => {
         >
             <path d="m0 0h18v18h-18zh18v18h-18z" fill="none" />
             <path d="m14.53 4.53l-1.06-1.06-4.47 4.47-4.47-4.47-1.06 1.06 4.47 4.47-4.47 4.47 1.06 1.06 4.47-4.47 4.47 4.47 1.06-1.06-4.47-4.47z" />
+        </svg>
+    );
+};
+
+export const TrashIcon = ({ onClick, className }) => {
+    return (
+        <svg
+            className={className}
+            onClick={onClick}
+            width="30px"
+            height="30px"
+            viewBox="0 0 1024 1024"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                fill="#000000"
+                d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z"
+            />
         </svg>
     );
 };
