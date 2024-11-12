@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import useAuth from "@/Hooks/useAuth";
+import {
+    ArchivedIcon,
+    ColorIcon,
+    CrossIcon,
+    ImageIcon,
+    LabelIcon,
+    PinIcon,
+    TrashIcon,
+} from "@/Components/Icons";
 
 const SearchBar = () => {
     return (
@@ -100,16 +111,53 @@ const ListIcon = () => {
 
 const MainLayout = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [selectedData, setSelectedData] = useState([]);
+
+    const { isLoggedIn } = useSelector((state) => state.auth);
+
+    const { signOut } = useAuth();
+
+    if (!isLoggedIn) {
+        return <Navigate to={"/"} />;
+    }
+
+    const handleSignOut = async () => {
+        await signOut();
+    };
 
     return (
         <div className="flex min-h-screen bg-gray-100">
             {/* ================= TOP BAR - SELECTED AREA ================= */}
-            <div></div>
+            <div
+                className={`${
+                    selectedData.length ? "top-0" : "-top-28"
+                } px-6 transition-all ease-in-out bg-white py-8 w-full flex items-center justify-between z-40 h-10 fixed`}
+            >
+                <div className="flex gap-2 items-center">
+                    <CrossIcon
+                        className="cursor-pointer bg-soft-with-hover size-8"
+                        onClick={() => setSelectedData([])}
+                    />
+                    <p className="text-lg font-medium">
+                        Selected Item {selectedData.length}
+                    </p>
+                </div>
+
+                <div className="flex gap-2">
+                    <PinIcon className="bg-soft-with-hover size-9" />
+                    <ColorIcon className="bg-soft-with-hover size-9" />
+                    <ImageIcon className="bg-soft-with-hover size-9" />
+                    <ArchivedIcon className="bg-soft-with-hover size-9" />
+                    <TrashIcon className="bg-soft-with-hover size-[35px]" />
+                </div>
+            </div>
 
             {/* ================= TOP BAR ================= */}
             <div className="px-6 border border-gray-300 py-8 w-full flex items-center z-30 h-10 bg-white fixed">
-                <div className="min-w-60 text-xl font-medium text-[#3c4043]">Keep</div>
-                
+                <div className="min-w-60 text-xl font-medium text-[#3c4043]">
+                    Keep
+                </div>
+
                 <div className="flex w-full items-center gap-40">
                     <SearchBar />
                     <div className="flex gap-6">
@@ -117,11 +165,14 @@ const MainLayout = () => {
                         <ListIcon />
                     </div>
                 </div>
-                
+
                 <div className="min-w-32 flex justify-end">
-                <span className="bg-gray-200 cursor-pointer uppercase size-9 flex items-center justify-center rounded-full">
-                    H
-                </span>
+                    <span
+                        onClick={handleSignOut}
+                        className="bg-gray-200 cursor-pointer uppercase size-9 flex items-center justify-center rounded-full"
+                    >
+                        H
+                    </span>
                 </div>
             </div>
 
@@ -173,7 +224,7 @@ const MainLayout = () => {
                 </div> */}
 
                 <main className="flex-1 p-6">
-                    <Outlet />
+                    <Outlet context={[selectedData, setSelectedData]} />
                 </main>
             </div>
         </div>
