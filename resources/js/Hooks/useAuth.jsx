@@ -13,10 +13,9 @@ const useAuth = () => {
 
     const signIn = async (data) => {
         try {
-            // const response = await API.post("/login", data);
-            // console.log(response);
-            const response = { email: "admin@email.com", password: "123" };
-            dispatch(loginReducer(response));
+            setIsLoading(true);
+            const response = await API.post("/login", data);
+            dispatch(loginReducer(response?.data));
             navigate("/dashboard");
         } catch (error) {
             console.log(error);
@@ -27,10 +26,9 @@ const useAuth = () => {
 
     const signUp = async (data) => {
         try {
-            // const response = await API.post("/register", data);
-            // console.log(response);
-            const response = { email: "admin@email.com", password: "123" };
-            dispatch(loginReducer(response));
+            setIsLoading(true);
+            const response = await API.post("/register", data);
+            dispatch(loginReducer(response?.data));
             navigate("/dashboard");
         } catch (error) {
             console.log(error);
