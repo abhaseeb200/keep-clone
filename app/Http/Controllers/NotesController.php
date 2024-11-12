@@ -12,20 +12,22 @@ class NotesController extends Controller
 {
     public function index(Request $request)
     {
-        $sortBy = $request->get('sort_by', 'created_at'); 
-        $order = $request->get('order', 'asc');
-        $limit = $request->get('limit', 5);
+        // $sortBy = $request->get('sort_by', 'created_at'); 
+        // $order = $request->get('order', 'asc');
+        // $limit = $request->get('limit', 5);
     
-        if (!in_array($sortBy, ['title', 'created_at', 'content'])) {
-            return response()->json(['message' => 'Invalid sort field.'], 400);
-        }
-        if (!in_array($order, ['asc', 'desc'])) {
-            return response()->json(['message' => 'Invalid order.'], 400);
-        }
+        // if (!in_array($sortBy, ['title', 'created_at', 'content'])) {
+        //     return response()->json(['message' => 'Invalid sort field.'], 400);
+        // }
+        // if (!in_array($order, ['asc', 'desc'])) {
+        //     return response()->json(['message' => 'Invalid order.'], 400);
+        // }
+        
+        // $data = Auth::user()->notes()->with("labels")->orderBy($sortBy, $order)->paginate($limit);  
+        
+        $data = Auth::user()->notes()->with("labels");  
     
-        $data = Auth::user()->notes()->with("labels")->orderBy($sortBy, $order)->paginate($limit);  
         return response()->json([
-            'count' => $data->count(),
             'data' => $data
         ]);
     }
@@ -54,7 +56,7 @@ class NotesController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'content' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'isPinned' => 'nullable|boolean',
             'isArchived' => 'nullable|boolean',

@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
@@ -24,7 +24,6 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -33,11 +32,13 @@ class AuthController extends Controller
 
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'Bearer',            
+            'token_type' => 'Bearer',
+            'email' => $request->email
         ]);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         // $credentials = $request->validate([
         //     'email' => 'required|string|email',
         //     'password' => 'required|string',
@@ -66,9 +67,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function forgotPassword(Request $request) {
+    public function forgotPassword(Request $request)
+    {
         $request->validate(['email' => 'required|email']);
- 
+
         $user = User::where('email', $request->email)->first();
         if (!$user) {
             return response()->json(['message' => 'Email not found.'], 404);
@@ -78,11 +80,12 @@ class AuthController extends Controller
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json(['message' => 'Password reset link sent to your email.'], 200);
         }
-        
+
         return response()->json(['message' => __($status)], 500);
     }
 
-    public function resetPassword(Request $request) {
+    public function resetPassword(Request $request)
+    {
         $request->validate([
             'token' => 'required',
             'email' => 'required|string|email',
