@@ -1,25 +1,21 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Input from "@/Components/Input";
 import Button from "@/Components/Button";
+import useAuth from "@/Hooks/useAuth";
 
 function SignUp() {
-    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
 
+    const { signUp, isLoading } = useAuth();
+
     const onSubmit = async (data) => {
-        try {
-            const response = await api.post("/login", data);
-            localStorage.setItem("auth", JSON.stringify({ ...response?.data }));
-            navigate("/dashboard");
-        } catch (error) {
-            console.log(error);
-        }
+        await signUp(data);
     };
 
     return (
@@ -64,7 +60,7 @@ function SignUp() {
                     errors={errors}
                     defaultValue="password123"
                 />
-                <Button title="Sign Up" />
+                <Button title="Sign Up" isLoading={isLoading} />
                 <Link to="/">
                     <div className="font-bold text-center cursor-pointer">
                         Already have an account

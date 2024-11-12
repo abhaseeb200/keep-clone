@@ -1,32 +1,27 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import Input from "@/Components/Input";
 import Button from "@/Components/Button";
-import api from "@/Config/api";
+import useAuth from "@/Hooks/useAuth";
 
 function SignIn() {
-    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
 
+    const { signIn, isLoading } = useAuth();
+
     const onSubmit = async (data) => {
-        try {
-            const response = await api.post("/login", data);
-            localStorage.setItem("auth", JSON.stringify({ ...response?.data }));
-            navigate("/dashboard");
-        } catch (error) {
-            console.log(error);
-        }
+        await signIn(data);
     };
 
     return (
         <>
             <h1 className="text-center text-3xl font-bold">Login Account</h1>
-            
+
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-5"
@@ -65,7 +60,7 @@ function SignIn() {
                     </Link>
                 </div>
 
-                <Button title="Sign In" type="submit" />
+                <Button title="Sign In" type="submit" isLoading={isLoading} />
 
                 <Link to="/signup">
                     <div className="font-bold text-center cursor-pointer">
