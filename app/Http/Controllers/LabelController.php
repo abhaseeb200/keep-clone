@@ -18,7 +18,9 @@ class LabelController extends Controller
         $userId = Auth::id();
         $data = Label::forUser($userId)->get();
 
-        return response()->json($data);
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
     /**
@@ -34,10 +36,10 @@ class LabelController extends Controller
         $label = Label::create([
             'name' => $request->name,
             'user_id' => Auth::id(),
-            'is_public' => false            
+            'is_public' => false
         ]);
 
-        return response()->json($label, 201);
+        return response()->json(["data" => $label, 'message' => 'Added successfully']);
     }
 
     /**
@@ -66,7 +68,7 @@ class LabelController extends Controller
 
         $label->update($request->only('name', 'is_public'));
 
-        return response()->json($label);
+        return response()->json(['data' => $label, 'message' => "Updated successfully"]);
         // return response()->json($id);
     }
 
