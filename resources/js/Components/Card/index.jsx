@@ -8,8 +8,14 @@ import {
     TickIcon,
 } from "@/Components/Icons";
 
-const Card = ({ data, index, handleOnSelect, selectedData }) => {
-
+const Card = ({
+    data,
+    index,
+    handleOnSelect,
+    selectedData,
+    handlePin,
+    handleArchived,
+}) => {
     return (
         <div
             className={`${
@@ -29,10 +35,13 @@ const Card = ({ data, index, handleOnSelect, selectedData }) => {
             {/* ============= CONTENT =============*/}
             <div>
                 <div className="font-medium text-lg flex justify-between mb-2">
-                    {data?.title} {index}
-                    <PinIcon className="cursor-pointer hover:bg-gray-200 size-10 -mt-2 rounded-full p-2 show-on-hover" />
+                    {data?.title}
+                    <PinIcon
+                        onClick={() => handlePin(data)}
+                        className="cursor-pointer hover:bg-gray-200 size-10 -mt-2 rounded-full p-2 show-on-hover"
+                    />
                 </div>
-                <div className="text-sm">{data?.description}</div>
+                <div className="text-sm">{data?.content}</div>
             </div>
 
             {/* ============= LABELS =============*/}
@@ -51,7 +60,10 @@ const Card = ({ data, index, handleOnSelect, selectedData }) => {
             <div className="flex gap-2 mt-2 show-on-hover">
                 <ColorIcon className="bg-soft-with-hover size-9" />
                 <ImageIcon className="bg-soft-with-hover size-9" />
-                <ArchivedIcon className="bg-soft-with-hover size-9" />
+                <ArchivedIcon
+                    onClick={() => handleArchived(data)}
+                    className="bg-soft-with-hover size-9"
+                />
                 <LabelIcon className="bg-soft-with-hover size-9" />
             </div>
         </div>
