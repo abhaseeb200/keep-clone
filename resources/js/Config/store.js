@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage";
 import { logoutReducer } from "@/Features/auth/authSlice";
 import authSlice from "@/Features/auth/authSlice";
 import noteSlice from "@/Features/note/noteSlice";
+import labelSlice from "@/Features/label/labelSlice";
 
 const persistConfig = {
     key: "root",
@@ -13,6 +14,7 @@ const persistConfig = {
 const reducers = combineReducers({
     auth: authSlice,
     note: noteSlice,
+    label: labelSlice,
 });
 
 const rootReducer = (state, action) => {
