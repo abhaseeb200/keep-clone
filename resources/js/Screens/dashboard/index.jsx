@@ -67,6 +67,26 @@ function Dashboard() {
         setSelectedData(dublicate);
     };
 
+    const handlePin = async (data) => {
+        let updatedPin;
+        if (data?.isPinned) {
+            updatedPin = { ...data, isPinned: false };
+        } else {
+            updatedPin = { ...data, isPinned: true };
+        }
+        await updateNote(updatedPin);
+    };
+
+    const handleArchived = async (data) => {
+        let updatedArchived;
+        if (data?.isArchived) {
+            updatedArchived = { ...data, isArchived: false };
+        } else {
+            updatedArchived = { ...data, isArchived: true };
+        }
+        await updateNote(updatedArchived);
+    };
+
     return (
         <div className="mt-8">
             <form
@@ -141,12 +161,14 @@ function Dashboard() {
             {/* ============== MASONRY NOTES CARDS ============== */}
             <div className="flex flex-wrap">
                 <Masonry columnsCount={4} gutter="8px">
-                    {notes.map((note, index) => (
+                    {notes?.map((note, index) => (
                         <Card
                             data={note}
                             key={index}
                             index={index}
                             handleOnSelect={handleOnSelect}
+                            handlePin={handlePin}
+                            handleArchived={handleArchived}
                         />
                     ))}
                 </Masonry>
