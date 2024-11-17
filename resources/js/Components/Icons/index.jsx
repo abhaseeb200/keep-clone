@@ -1,3 +1,67 @@
+export const RefreshIcon = () => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="#000"
+        >
+            <path d="M13 9v2h7V4h-2v2.74C16.53 5.07 14.4 4 12 4c-2.21 0-4.21.9-5.66 2.34S4 9.79 4 12c0 4.42 3.58 8 8 8 2.21 0 4.21-.9 5.66-2.34l-1.42-1.42A5.98 5.98 0 0 1 12 18c-3.31 0-6-2.69-6-6 0-1.65.67-3.15 1.76-4.24A5.98 5.98 0 0 1 12 6a6.01 6.01 0 0 1 5.19 3H13z" />
+        </svg>
+    );
+};
+
+export const SearchIcon = () => {
+    return (
+        <svg
+            className="w-5 h-5 text-gray-500 dark:text-gray-400"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                fillRule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clipRule="evenodd"
+            />
+        </svg>
+    );
+};
+
+export const ListIcon = () => {
+    return (
+        <svg
+            width="24px"
+            height="24px"
+            viewBox="0 0 24 24"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <g
+                id="list_view_24px"
+                stroke="none"
+                strokeWidth={1}
+                fill="none"
+                fillRule="evenodd"
+            >
+                <polygon
+                    id="bounds"
+                    fillOpacity={0}
+                    fill="#FFFFFF"
+                    points="0 0 24 0 24 24 0 24"
+                />
+                <path
+                    d="M20,9 L4,9 L4,5 L20,5 L20,9 Z M20,19 L4,19 L4,15 L20,15 L20,19 Z M3,3 C2.45,3 2,3.45 2,4 L2,10 C2,10.55 2.45,11 3,11 L21,11 C21.55,11 22,10.55 22,10 L22,4 C22,3.45 21.55,3 21,3 L3,3 Z M3,13 C2.45,13 2,13.45 2,14 L2,20 C2,20.55 2.45,21 3,21 L21,21 C21.55,21 22,20.55 22,20 L22,14 C22,13.45 21.55,13 21,13 L3,13 Z"
+                    id="icon"
+                    fill="#000000"
+                    fillRule="nonzero"
+                />
+            </g>
+        </svg>
+    );
+};
+
 export const ImageIcon = ({ className }) => {
     return (
         <svg
