@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const noteSlice = createSlice({
-    name: "auth",
+    name: "note",
     initialState: { notes: [] },
     reducers: {
         getNotesReducer: (state, action) => {
@@ -10,28 +10,28 @@ export const noteSlice = createSlice({
                 notes: [...action.payload],
             };
         },
-        createNoteReducer: (state) => {
+        createNoteReducer: (state, action) => {
             return {
                 ...state,
                 notes: [...action.payload, ...state.notes],
             };
         },
-        updateNoteReducer: (state) => {
-            let findIndex = state.notes.findIndex(i => i.id == action.payload)
-            
+        updateNoteReducer: (state, action) => {
+            let findIndex = state.notes.findIndex(
+                (i) => i?.id == action.payload.id
+            );
+
             if (findIndex !== -1) {
-                state.notes[findIndex] = action.payload
+                state.notes[findIndex] = action.payload;
             }
-            
-            return {
-                state,
-            };
         },
-        deleteNoteReducer: (state) => {
-            let deletedNote = state.notes.filter((i) => i.id !== action.payload);
+        deleteNoteReducer: (state, action) => {
+            let deletedNote = state.notes.filter(
+                (i) => i.id !== action.payload
+            );
             return {
                 ...state,
-                notes: deletedNote
+                notes: deletedNote,
             };
         },
     },
