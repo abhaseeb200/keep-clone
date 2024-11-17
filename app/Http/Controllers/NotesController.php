@@ -25,7 +25,7 @@ class NotesController extends Controller
         
         // $data = Auth::user()->notes()->with("labels")->orderBy($sortBy, $order)->paginate($limit);  
         
-        $data = Auth::user()->notes()->with("labels");  
+        $data = Auth::user()->notes()->with("labels")->get();  
     
         return response()->json([
             'data' => $data
@@ -60,7 +60,7 @@ class NotesController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'isPinned' => 'nullable|boolean',
             'isArchived' => 'nullable|boolean',
-            'background_color' => 'nullable|string',
+            'background' => 'nullable|string',
             'labels' => 'array',
             'labels.*' => 'exists:labels,id' //Used to ensure that each label ID provided in the labels
         ]);
@@ -79,7 +79,7 @@ class NotesController extends Controller
             'image' => $imagePath ?? "",
             'isPinned' => $request->input('isPinned', false),
             'isArchived' => $request->input('isArchived', false),
-            'background_color' => $request->input('background_color', '')
+            'background' => $request->input('background', '')
         ]);
 
          // Attach labels if provided
@@ -104,7 +104,7 @@ class NotesController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'content' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'isPinned' => 'nullable|boolean',
             'isArchived' => 'nullable|boolean',
@@ -137,7 +137,7 @@ class NotesController extends Controller
             $note->labels()->sync($validatedData['labels']);
         }
 
-        return response()->json(['message' => 'Updated successfully', 'post' => $note->load('labels')]);
+        return response()->json(['message' => 'Updated successfully', 'data' => $note->load('labels')]);
     }
 
     // Remove the specified post from storage
