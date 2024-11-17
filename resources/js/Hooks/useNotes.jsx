@@ -19,8 +19,7 @@ const useNotes = () => {
             const response = await API.get("/notes");
             dispatch(getNotesReducer(response.data.data));
         } catch (error) {
-            // toast(error.message);
-            console.log(error.message);
+            toast.error(error?.response?.data?.message || error?.message);
         } finally {
             setIsLoading(false);
         }
@@ -31,9 +30,9 @@ const useNotes = () => {
         try {
             const response = await API.post("/note", body);
             dispatch(createNoteReducer(response.data.data));
-            toast(response.data.message);
+            toast.success(response.data.message);
         } catch (error) {
-            console.log(error);
+            toast.error(error?.response?.data?.message || error?.message);
         } finally {
             setIsLoading(false);
         }
@@ -42,11 +41,11 @@ const useNotes = () => {
     // REMEMBER: PASS FROM_DATA IN THE BODY
     const updateNote = async (body) => {
         try {
-            const response = await API.put(`/note/${body?.id}`, body);
-            dispatch(updateNoteReducer(response.data.data));
-            toast(response.data.message);
+            const response = await API.put(`/note/${body.id}`, body);
+            dispatch(updateNoteReducer(response?.data?.data));
+            toast.success(response?.data?.message);
         } catch (error) {
-            console.log(error);
+            toast.error(error?.response?.data?.message || error?.message);
         } finally {
             setIsLoading(false);
         }
@@ -56,9 +55,9 @@ const useNotes = () => {
         try {
             const response = await API.delete(`/note/${id}`);
             dispatch(deleteNoteReducer(id));
-            toast(response.data.message);
+            toast.success(response.data.message);
         } catch (error) {
-            console.log(error);
+            toast.error(error?.response?.data?.message || error?.message);
         } finally {
             setIsLoading(false);
         }
@@ -69,7 +68,7 @@ const useNotes = () => {
             const response = await API.get(`/search?query=${query}`);
             console.log(response.data.data);
         } catch (error) {
-            console.log(error);
+            toast.error(error?.response?.data?.message || error?.message);
         } finally {
             setIsLoading(false);
         }
