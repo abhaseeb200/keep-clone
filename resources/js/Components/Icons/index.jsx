@@ -1,4 +1,4 @@
-export const SpinnerIcon = ({className}) => {
+export const SpinnerIcon = ({ className }) => {
     return (
         <svg
             className={`animate-spin ${className}`}
@@ -37,10 +37,10 @@ export const RefreshIcon = () => {
     );
 };
 
-export const SearchIcon = () => {
+export const SearchIcon = ({ className }) => {
     return (
         <svg
-            className="w-5 h-5 text-gray-500 dark:text-gray-400"
+            className={className}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -156,10 +156,11 @@ export const ArchivedIcon = ({ className, onClick }) => {
     );
 };
 
-export const LabelIcon = ({ className }) => {
+export const LabelIcon = ({ className, onClick }) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
+            onClick={onClick}
             className={className}
             width="24"
             height="24"
