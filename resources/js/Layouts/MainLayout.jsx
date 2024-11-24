@@ -25,7 +25,7 @@ const SearchBar = () => {
             </label>
             <div className="relative w-full">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                    <SearchIcon />
+                    <SearchIcon className="w-5 h-5 text-gray-500" />
                 </div>
                 <input
                     type="text"
@@ -45,7 +45,7 @@ const SearchBar = () => {
 
 const MainLayout = ({ openModal }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedData, setSelectedData] = useState([]);
+    const [selectMultiple, setSelectMultiple] = useState([]);
 
     const { labels } = useSelector((state) => state?.label);
     const { isLoggedIn } = useSelector((state) => state.auth);
@@ -65,16 +65,16 @@ const MainLayout = ({ openModal }) => {
             {/* ================= TOP BAR - SELECTED AREA ================= */}
             <div
                 className={`${
-                    selectedData.length ? "top-0" : "-top-28"
+                    selectMultiple.length ? "top-0" : "-top-28"
                 } px-6 transition-all ease-in-out bg-white py-8 w-full flex items-center justify-between z-40 h-10 fixed`}
             >
                 <div className="flex gap-2 items-center">
                     <CrossIcon
                         className="cursor-pointer bg-soft-with-hover size-8"
-                        onClick={() => setSelectedData([])}
+                        onClick={() => setSelectMultiple([])}
                     />
                     <p className="text-lg font-medium">
-                        Selected Item {selectedData.length}
+                        Selected Item {selectMultiple.length}
                     </p>
                 </div>
 
@@ -144,6 +144,7 @@ const MainLayout = ({ openModal }) => {
 
                     {labels?.map((label) => (
                         <Link
+                            key={label?.id}
                             to={label?.name}
                             className="flex items-center gap-4 font-medium py-3.5 px-4 rounded-r-full hover:bg-gray-100  transition"
                         >
@@ -174,7 +175,7 @@ const MainLayout = ({ openModal }) => {
                 </div> */}
 
                 <main className="flex-1 p-6">
-                    <Outlet context={[selectedData, setSelectedData]} />
+                    <Outlet context={[selectMultiple, setSelectMultiple]} />
                 </main>
             </div>
         </div>
