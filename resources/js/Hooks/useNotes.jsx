@@ -50,6 +50,17 @@ const useNotes = () => {
             setIsLoading(false);
         }
     };
+    
+    const updateNoteLabels = async (body) => {
+        try {
+            const response = await API.put(`/note/${body.id}`, body);
+            toast.success(response?.data?.message);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const deleteNote = async (id) => {
         try {
@@ -77,6 +88,7 @@ const useNotes = () => {
     return {
         getNotes,
         updateNote,
+        updateNoteLabels,
         deleteNote,
         createNote,
         searchNote,
