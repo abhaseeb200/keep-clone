@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useOutletContext } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Masonry from "react-responsive-masonry";
 import {
     ArchivedIcon,
@@ -11,18 +11,23 @@ import {
     PinIcon,
 } from "@/Components/Icons";
 import Card from "@/Components/Card";
-import useClickOutside from "@/Hooks/useClickOutside";
+import { updateNoteReducer } from "@/Features/note/noteSlice";
 import useNotes from "@/Hooks/useNotes";
+import useDebounce from "@/Hooks/useDebounce";
+import useClickOutside from "@/Hooks/useClickOutside";
 
 function Dashboard() {
-    const [isUpdate, setIsUpdate] = useState(false);
     const [isMoreField, setIsMoreField] = useState(false);
+    const [currentId, setCurrentId] = useState(null);
 
     const containerRef = useRef(null);
-    const [selectedData, setSelectedData] = useOutletContext();
+
+    const [selectMultiple, setSelectMultiple] = useOutletContext();
+
+    const dispatch = useDispatch();
     const { notes } = useSelector((state) => state?.note);
 
-    const { getNotes, createNote, updateNote } = useNotes();
+    const { getNotes, createNote, updateNote, updateNoteLabels } = useNotes();
 
     useClickOutside(containerRef, () => setIsMoreField(false));
 
@@ -42,9 +47,6 @@ function Dashboard() {
 
     const onSubmit = async (data) => {
         await createNote(data);
-        // if (isUpdate) {
-        //     await updateNote(data);
-        // }
     };
 
     const handleClose = (e) => {
@@ -53,18 +55,17 @@ function Dashboard() {
         reset();
     };
 
-    const handleOnSelect = (index) => {
-        let findSelected = selectedData.find((item) => item == index);
-        let dublicate = [...selectedData];
+    const handleOnSelect = (data) => {
+        let isExists = selectMultiple.find((item) => item?.id == data?.id);
+        let duplicate = [...selectMultiple];
 
-        //greater than or equal to zero. should be removed after the api data
-        if (findSelected >= 0) {
-            dublicate = selectedData.filter((i) => i !== findSelected);
+        if (isExists) {
+            duplicate = selectMultiple.filter((i) => i?.id !== isExists?.id);
         } else {
-            dublicate.push(index);
+            duplicate.push(data);
         }
 
-        setSelectedData(dublicate);
+        setSelectMultiple(duplicate);
     };
 
     const handlePin = async (data) => {
@@ -85,6 +86,40 @@ function Dashboard() {
             updatedArchived = { ...data, isArchived: true };
         }
         await updateNote(updatedArchived);
+    };
+
+    const handleSelectLabels = async (label, note) => {
+        let isExists = note.labels.find((i) => i?.id == label?.id);
+        let newLabels,
+            newLabelsId = [];
+
+        if (isExists) {
+            newLabels = note.labels.filter((i) => i.id !== isExists.id);
+        } else {
+            newLabels = [...note.labels, label];
+        }
+
+        newLabelsId = newLabels.map((i) => i?.id);
+
+        dispatch(updateNoteReducer({ ...note, labels: newLabels }));
+
+        debouncedChangeHandler({ ...note, labels: newLabelsId });
+    };
+
+    const debouncedChangeHandler = useDebounce((data) => {
+        updateNoteLabels(data);
+    }, 3000);
+
+    const handleLabelToggle = (data) => {
+        setCurrentId((prevId) => (prevId === data.id ? null : data.id));
+    };
+
+    const handleRemoveLabel = (label, note) => {
+        let newLabels = note.labels.filter((i) => i.id !== label.id);
+        let newLabelsId = newLabels.map((i) => i.id);
+
+        dispatch(updateNoteReducer({ ...note, labels: newLabels }));
+        updateNoteLabels({ ...note, labels: newLabelsId });
     };
 
     return (
@@ -163,12 +198,17 @@ function Dashboard() {
                 <Masonry columnsCount={4} gutter="8px">
                     {notes?.map((note, index) => (
                         <Card
-                            data={note}
                             key={index}
-                            index={index}
+                            data={note}
+                            selectMultiple={selectMultiple}
+                            currentId={currentId}
+                            setCurrentId={setCurrentId}
                             handleOnSelect={handleOnSelect}
                             handlePin={handlePin}
                             handleArchived={handleArchived}
+                            handleSelectLabels={handleSelectLabels}
+                            handleLabelToggle={handleLabelToggle}
+                            handleRemoveLabel={handleRemoveLabel}
                         />
                     ))}
                 </Masonry>
