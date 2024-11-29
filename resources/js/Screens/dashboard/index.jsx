@@ -11,6 +11,7 @@ import {
     PinIcon,
 } from "@/Components/Icons";
 import Card from "@/Components/Card";
+import BackgroundOptions from "@/Components/BackgroundOptions";
 import { updateNoteReducer } from "@/Features/note/noteSlice";
 import useNotes from "@/Hooks/useNotes";
 import useDebounce from "@/Hooks/useDebounce";
@@ -169,7 +170,10 @@ function Dashboard() {
                     } flex justify-between items-center px-4 py-3 gap-2`}
                 >
                     <div className="flex gap-2">
-                        <ColorIcon className="bg-soft-with-hover size-9" />
+                        <div className="relative">
+                            <ColorIcon className="bg-soft-with-hover size-9" />
+                            <BackgroundOptions />
+                        </div>
                         <ImageIcon className="bg-soft-with-hover size-9" />
                         <ArchivedIcon className="bg-soft-with-hover size-9" />
                         <LabelIcon className="bg-soft-with-hover size-9" />

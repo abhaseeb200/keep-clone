@@ -29,8 +29,9 @@ const useLabels = () => {
         try {
             const response = await API.post("/label", body);
             dispatch(createLabelReducer(response.data.data));
-            reset();
+            reset && reset();
             toast.success(response.data.message);
+            return response.data.data
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
         } finally {

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { SearchIcon } from "@/Components/Icons";
+import { PlusIcon, SearchIcon } from "@/Components/Icons";
 import useClickOutside from "@/Hooks/useClickOutside";
+import useLabels from "@/Hooks/useLabels";
 
 const LabelSelect = ({
     className,
@@ -13,6 +14,7 @@ const LabelSelect = ({
     const [labelsCopy, setLabelsCopy] = useState([]);
     const [searchValue, setSearchValue] = useState("");
 
+    const { createLabel, isLoading } = useLabels();
     const { labels } = useSelector((state) => state?.label);
 
     const containerRef = useRef(null);
@@ -33,6 +35,13 @@ const LabelSelect = ({
         }
 
         setLabelsCopy(newSearchItems);
+    };
+
+    const handleCreateLabel = async () => {
+        let response = await createLabel({ name: searchValue });
+
+        //Checked the label after successfully created
+        handleSelectLabels(response, note);
     };
 
     useEffect(() => {
@@ -65,14 +74,16 @@ const LabelSelect = ({
                         </div>
 
                         {/* ================= LABELS ================= */}
-                        <div className="max-h-48 overflow-auto flex flex-col">
+                        <div className="max-h-48 overflow-auto flex flex-col pb-1">
                             {labelsCopy?.map((label, index) => (
                                 <div key={index}>
                                     <label className="px-2 py-[3px] hover:bg-gray-100 w-full cursor-pointer inline-flex items-center text-sm">
                                         <input
                                             type="checkbox"
                                             className="form-checkbox size-3 text-gray-600"
-                                            checked={note?.labels?.some((i) => i?.id == label?.id)}
+                                            checked={note?.labels?.some(
+                                                (i) => i?.id == label?.id
+                                            )}
                                             onChange={() =>
                                                 handleSelectLabels(label, note)
                                             }
@@ -84,6 +95,24 @@ const LabelSelect = ({
                                 </div>
                             ))}
                         </div>
+
+                        {/* ================= CREATE NEW LABEL ================= */}
+                        {searchValue.length >= 1 && (
+                            <button
+                                role="button"
+                                disabled={isLoading}
+                                onClick={handleCreateLabel}
+                                className="px-2 py-1.5 hover:bg-gray-100 w-full cursor-pointer inline-flex items-center text-sm border-t-2 border-gray-300 gap-1"
+                            >
+                                <PlusIcon className="size-4" />
+                                <p>
+                                    Create
+                                    <span className="font-bold">
+                                        "{searchValue}"
+                                    </span>
+                                </p>
+                            </button>
+                        )}
                     </div>
                 </div>
             )}
