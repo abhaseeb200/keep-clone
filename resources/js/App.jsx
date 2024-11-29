@@ -12,7 +12,6 @@ import SignIn from "@/Screens/sign-in";
 import SignUp from "@/Screens/sign-up";
 import ForgotPassword from "@/Screens/forgot-password";
 import Dashboard from "@/Screens/dashboard";
-import User from "@/Screens/user";
 
 function App() {
     const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +37,6 @@ function App() {
                     {/* =============== PROTECTED ROUTES =============== */}
                     <Route element={<MainLayout openModal={openModal} />}>
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/users" element={<User />} />
                     </Route>
                 </Routes>
             </Router>
