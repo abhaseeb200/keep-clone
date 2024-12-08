@@ -6,7 +6,7 @@ import Masonry from "react-responsive-masonry";
 import {
     ArchivedIcon,
     ColorIcon,
-    ImageIcon,
+    ImageUploadIcon,
     LabelIcon,
     PinIcon,
 } from "@/Components/Icons";
@@ -20,6 +20,9 @@ import useClickOutside from "@/Hooks/useClickOutside";
 function Dashboard() {
     const [isMoreField, setIsMoreField] = useState(false);
     const [currentId, setCurrentId] = useState(null);
+    //This state used for input form where the notes are created
+    const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
+    const [background, setBackground] = useState("#fff");
 
     const containerRef = useRef(null);
 
@@ -30,7 +33,10 @@ function Dashboard() {
 
     const { getNotes, createNote, updateNote, updateNoteLabels } = useNotes();
 
-    useClickOutside(containerRef, () => setIsMoreField(false));
+    useClickOutside(containerRef, () => {
+        setIsMoreField(false);
+        setIsBackgroundOptionOpen(false);
+    });
 
     useEffect(() => {
         async function fetchNotes() {
@@ -89,6 +95,10 @@ function Dashboard() {
         await updateNote(updatedArchived);
     };
 
+    const handleTrash = async (data) => {
+        console.log(data, "TRASH NOTE...");
+    };
+
     const handleSelectLabels = async (label, note) => {
         let isExists = note.labels.find((i) => i?.id == label?.id);
         let newLabels,
@@ -123,13 +133,48 @@ function Dashboard() {
         updateNoteLabels({ ...note, labels: newLabelsId });
     };
 
+    const handleBackgroundOption = (data) => {
+        if (Object.keys(data).includes("url")) {
+            return setBackground(`url(${data?.url})`);
+        }
+
+        setBackground(data?.code);
+    };
+
+    const handleUpdateBackgroundOption = async (option, note) => {
+        let background;
+        if (Object.keys(option).includes("url")) {
+            background = option?.url;
+        } else {
+            background = option?.code;
+        }
+
+        //Remove labels from it
+        const { labels, ...remainNote } = note;
+
+        await updateNote({
+            ...remainNote,
+            background: background,
+        });
+    };
+
+    const handleFileChange = (event) => {
+        console.log(event, ":++++++++++++++++++++");
+
+        const file = event.target.files[0];
+        if (file) {
+            console.log("Selected file:", file);
+            // You can now process the uploaded file, e.g., upload it to a server or display it.
+        }
+    };
+
     return (
         <div className="mt-8">
             <form
-                className="mb-8 rounded-lg shadow-lg bg-white max-w-2xl mx-auto"
+                className="mb-8 rounded-lg shadow-lg max-w-2xl mx-auto"
+                style={{ background: background }}
                 ref={containerRef}
                 onSubmit={handleSubmit(onSubmit)}
-                onClick={() => setIsMoreField(true)}
             >
                 {/* ============== TITLE ============== */}
                 <div
@@ -152,6 +197,7 @@ function Dashboard() {
                 {/* ============== DESCRIPTION ============== */}
                 <div className="flex justify-between box-border px-4 py-3 rounded-md outline-none">
                     <input
+                        onClick={() => setIsMoreField(true)}
                         name="content"
                         className="bg-transparent outline-none w-full"
                         placeholder="Take a note"
@@ -159,7 +205,10 @@ function Dashboard() {
                         {...register("content")}
                     />
                     {!isMoreField && (
-                        <ImageIcon className="cursor-pointer opacity-70 hover:bg-gray-200 size-10 rounded-full p-2" />
+                        <ImageUploadIcon
+                            className="cursor-pointer opacity-70 hover:bg-gray-200 size-10 rounded-full p-2"
+                            handleFileChange={handleFileChange}
+                        />
                     )}
                 </div>
 
@@ -170,11 +219,15 @@ function Dashboard() {
                     } flex justify-between items-center px-4 py-3 gap-2`}
                 >
                     <div className="flex gap-2">
-                        <div className="relative">
-                            <ColorIcon className="bg-soft-with-hover size-9" />
-                            <BackgroundOptions />
-                        </div>
-                        <ImageIcon className="bg-soft-with-hover size-9" />
+                        <BackgroundOptions
+                            isOpen={isBackgroundOptionOpen}
+                            setIsOpen={setIsBackgroundOptionOpen}
+                            handleBackgroundOption={handleBackgroundOption}
+                        />
+                        <ImageUploadIcon
+                            className="bg-soft-with-hover size-9"
+                            handleFileChange={handleFileChange}
+                        />
                         <ArchivedIcon className="bg-soft-with-hover size-9" />
                         <LabelIcon className="bg-soft-with-hover size-9" />
                     </div>
@@ -206,10 +259,14 @@ function Dashboard() {
                             data={note}
                             selectMultiple={selectMultiple}
                             currentId={currentId}
+                            handleUpdateBackgroundOption={
+                                handleUpdateBackgroundOption
+                            }
                             setCurrentId={setCurrentId}
                             handleOnSelect={handleOnSelect}
                             handlePin={handlePin}
                             handleArchived={handleArchived}
+                            handleTrash={handleTrash}
                             handleSelectLabels={handleSelectLabels}
                             handleLabelToggle={handleLabelToggle}
                             handleRemoveLabel={handleRemoveLabel}
