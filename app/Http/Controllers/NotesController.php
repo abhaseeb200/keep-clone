@@ -108,7 +108,7 @@ class NotesController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'isPinned' => 'nullable|boolean',
             'isArchived' => 'nullable|boolean',
-            'background_color' => 'nullable|string',
+            'background' => 'nullable|string',
             'labels' => 'array',
             'labels.*' => 'exists:labels,id'
         ]);
@@ -129,7 +129,7 @@ class NotesController extends Controller
             'image' => $imagePath ?? "",
             'isPinned' => $request->input('isPinned'),
             'isArchived' => $request->input('isArchived'),
-            'background_color' => $request->input('background_color')
+            'background' => $request->input('background')
         ]);
 
         // Sync labels if provided
