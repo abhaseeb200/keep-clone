@@ -1,26 +1,32 @@
+import { useState } from "react";
 import {
     ArchivedIcon,
     ColorIcon,
     CrossIcon,
-    ImageIcon,
+    ImageUploadIcon,
     LabelIcon,
     PinIcon,
     TickIcon,
+    TrashIcon,
 } from "@/Components/Icons";
 import LabelSelect from "@/Components/LabelSelect";
+import BackgroundOptions from "@/Components/BackgroundOptions";
 
 const Card = ({
     data,
     handleOnSelect,
     selectMultiple,
     handlePin,
+    handleTrash,
     handleArchived,
     handleSelectLabels,
     handleLabelToggle,
     handleRemoveLabel,
     currentId,
     setCurrentId,
+    handleUpdateBackgroundOption,
 }) => {
+    const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
     let isSelected = selectMultiple?.some((i) => i?.id == data?.id);
 
     return (
@@ -29,14 +35,19 @@ const Card = ({
                 className={`${
                     isSelected ? "border-gray-900" : "border-gray-200"
                 } group border p-3 bg-white rounded-lg relative hover:shadow-lg`}
+                style={{
+                    background: data?.background.includes("background")
+                        ? `url(${data.background})`
+                        : data.background,
+                }}
             >
                 {/* ============= SELECTED ICON =============*/}
-                <TickIcon
-                    className={`${
-                        isSelected ? "flex" : "show-on-hover"
-                    } absolute -top-2 -left-2 cursor-pointer`}
-                    onClick={() => handleOnSelect(data)}
-                />
+                <div className="absolute -top-2 -left-2 cursor-pointer">
+                    <TickIcon
+                        className={`${isSelected ? "flex" : "show-on-hover"}`}
+                        onClick={() => handleOnSelect(data)}
+                    />
+                </div>
 
                 {/* ============= CONTENT =============*/}
                 <div>
@@ -72,8 +83,13 @@ const Card = ({
 
                 {/* ============= OPTIONS - SHOW ON HOVER =============*/}
                 <div className="flex gap-2 mt-2 show-on-hover">
-                    <ColorIcon className="bg-soft-with-hover size-9" />
-                    <ImageIcon className="bg-soft-with-hover size-9" />
+                    <BackgroundOptions
+                        isOpen={isBackgroundOptionOpen}
+                        setIsOpen={setIsBackgroundOptionOpen}
+                        data={data}
+                        handleBackgroundOption={handleUpdateBackgroundOption}
+                    />
+                    <ImageUploadIcon className="bg-soft-with-hover size-9" />
                     <ArchivedIcon
                         onClick={() => handleArchived(data)}
                         className="bg-soft-with-hover size-9"
@@ -83,6 +99,10 @@ const Card = ({
                             e.stopPropagation();
                             handleLabelToggle(data);
                         }}
+                        className="bg-soft-with-hover size-9"
+                    />
+                    <TrashIcon
+                        onClick={() => handleTrash(data)}
                         className="bg-soft-with-hover size-9"
                     />
                 </div>
