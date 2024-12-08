@@ -7,7 +7,7 @@ import {
     BulbIcon,
     ColorIcon,
     CrossIcon,
-    ImageIcon,
+    ImageUploadIcon,
     LabelIcon,
     ListIcon,
     PencilIcon,
@@ -59,6 +59,12 @@ const MainLayout = ({ openModal }) => {
     const handleSignOut = async () => {
         await signOut();
     };
+    
+    const handleRefresh = async () => {
+        // 
+    };
+
+
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -81,7 +87,7 @@ const MainLayout = ({ openModal }) => {
                 <div className="flex gap-2">
                     <PinIcon className="bg-soft-with-hover size-9" />
                     <ColorIcon className="bg-soft-with-hover size-9" />
-                    <ImageIcon className="bg-soft-with-hover size-9" />
+                    <ImageUploadIcon className="bg-soft-with-hover size-9" />
                     <ArchivedIcon className="bg-soft-with-hover size-9" />
                     <TrashIcon className="bg-soft-with-hover size-9" />
                 </div>
@@ -96,7 +102,7 @@ const MainLayout = ({ openModal }) => {
                 <div className="flex w-full items-center gap-40">
                     <SearchBar />
                     <div className="flex gap-6">
-                        <RefreshIcon />
+                        <RefreshIcon className="cursor-pointer" onClick={handleRefresh} />
                         <ListIcon />
                     </div>
                 </div>
