@@ -9,6 +9,7 @@ import {
     ImageUploadIcon,
     LabelIcon,
     PinIcon,
+    TrashIcon,
 } from "@/Components/Icons";
 import Card from "@/Components/Card";
 import BackgroundOptions from "@/Components/BackgroundOptions";
@@ -23,8 +24,10 @@ function Dashboard() {
     //This state used for input form where the notes are created
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
     const [background, setBackground] = useState("#fff");
+    const [preview, setPreview] = useState(null);
 
     const containerRef = useRef(null);
+    const imageUploadRef = useRef(null);
 
     const [selectMultiple, setSelectMultiple] = useOutletContext();
 
@@ -49,6 +52,7 @@ function Dashboard() {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
     } = useForm();
 
@@ -159,12 +163,22 @@ function Dashboard() {
     };
 
     const handleFileChange = (event) => {
-        console.log(event, ":++++++++++++++++++++");
-
         const file = event.target.files[0];
         if (file) {
-            console.log("Selected file:", file);
-            // You can now process the uploaded file, e.g., upload it to a server or display it.
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+
+            setIsMoreField(true);
+            setValue("image", file);
+        }
+    };
+
+    const handleImageUploadRef = () => {
+        if (imageUploadRef.current) {
+            imageUploadRef.current.click();
         }
     };
 
@@ -176,6 +190,22 @@ function Dashboard() {
                 ref={containerRef}
                 onSubmit={handleSubmit(onSubmit)}
             >
+                {/* ============== IMAGE - IF UPLOADED ============== */}
+                {preview && (
+                    <div className="flex justify-center relative">
+                        <img
+                            src={preview}
+                            alt="Preview"
+                            className="max-w-full w-[672px]"
+                        />
+                        <div
+                            className="absolute top-4 right-4"
+                            onClick={() => setPreview(null)}
+                        >
+                            <TrashIcon className="cursor-pointer opacity-70 rounded-full p-2 size-9 shadow-xl bg-gray-900 fill-gray-100 hover:bg-white hover:!fill-black" />
+                        </div>
+                    </div>
+                )}
                 {/* ============== TITLE ============== */}
                 <div
                     className={`${
@@ -204,12 +234,16 @@ function Dashboard() {
                         errors={errors}
                         {...register("content")}
                     />
-                    {!isMoreField && (
-                        <ImageUploadIcon
-                            className="cursor-pointer opacity-70 hover:bg-gray-200 size-10 rounded-full p-2"
-                            handleFileChange={handleFileChange}
-                        />
-                    )}
+
+                    <ImageUploadIcon
+                        className={`bg-soft-with-hover size-9 ${
+                            isMoreField ? "hidden" : "block"
+                        }`}
+                        handleFileChange={handleFileChange}
+                        imageUploadRef={imageUploadRef}
+                        handleImageUploadRef={handleImageUploadRef}
+                        register={register}
+                    />
                 </div>
 
                 {/* ============== OPTIONS ============== */}
@@ -227,6 +261,9 @@ function Dashboard() {
                         <ImageUploadIcon
                             className="bg-soft-with-hover size-9"
                             handleFileChange={handleFileChange}
+                            imageUploadRef={imageUploadRef}
+                            handleImageUploadRef={handleImageUploadRef}
+                            register={register}
                         />
                         <ArchivedIcon className="bg-soft-with-hover size-9" />
                         <LabelIcon className="bg-soft-with-hover size-9" />
@@ -252,7 +289,7 @@ function Dashboard() {
 
             {/* ============== MASONRY NOTES CARDS ============== */}
             <div className="flex flex-wrap">
-                <Masonry columnsCount={4} gutter="8px">
+                <Masonry columnsCount={4} gutter="18px">
                     {notes?.map((note, index) => (
                         <Card
                             key={index}

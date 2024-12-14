@@ -13,7 +13,7 @@ export const noteSlice = createSlice({
         createNoteReducer: (state, action) => {
             return {
                 ...state,
-                notes: [...action.payload, ...state.notes],
+                notes: [action.payload, ...state.notes],
             };
         },
         updateNoteReducer: (state, action) => {

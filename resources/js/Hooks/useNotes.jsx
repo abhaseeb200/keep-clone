@@ -25,10 +25,26 @@ const useNotes = () => {
         }
     };
 
-    // REMEMBER: PASS FROM_DATA IN THE BODY
     const createNote = async (body) => {
+        // CREATE A FORM DATA
+        const formData = new FormData();
+        Object.keys(body).forEach((key) => {
+            const value = body[key];
+            if (Array.isArray(value)) {
+                value.forEach((item, index) => {
+                    formData.append(`${key}[${index}]`, item);
+                });
+            } else {
+                formData.append(key, value);
+            }
+        });
+
         try {
-            const response = await API.post("/note", body);
+            const response = await API.post("/note", body, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
             dispatch(createNoteReducer(response.data.data));
             toast.success(response.data.message);
         } catch (error) {
@@ -41,6 +57,8 @@ const useNotes = () => {
     // REMEMBER: PASS FROM_DATA IN THE BODY
     const updateNote = async (body) => {
         try {
+            // REMOVE IMAGE FROM THE OBJECT
+            delete body.image;
             const response = await API.put(`/note/${body.id}`, body);
             dispatch(updateNoteReducer(response?.data?.data));
             toast.success(response?.data?.message);
@@ -50,9 +68,35 @@ const useNotes = () => {
             setIsLoading(false);
         }
     };
-    
+
+    // REMEMBER: Please use POST method to update image
+    // ROUTE:  api/note-image/1_method=PUT
+    const updateImageNote = async (body) => {
+        const formData = new FormData();
+        Object.keys(body).forEach((key) => {
+            const value = body[key];
+            formData.append(key, value);
+        });
+
+        try {
+            const response = await API.post(`/note-image/${body.id}_method=PUT`, body, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            dispatch(updateNoteReducer(response?.data?.data));
+            toast.success(response?.data?.message);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const updateNoteLabels = async (body) => {
         try {
+            // REMOVE IMAGE FROM THE OBJECT
+            delete body.image;
             const response = await API.put(`/note/${body.id}`, body);
             toast.success(response?.data?.message);
         } catch (error) {
@@ -88,6 +132,7 @@ const useNotes = () => {
     return {
         getNotes,
         updateNote,
+        updateImageNote,
         updateNoteLabels,
         deleteNote,
         createNote,
