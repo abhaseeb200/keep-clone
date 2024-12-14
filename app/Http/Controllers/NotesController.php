@@ -140,6 +140,26 @@ class NotesController extends Controller
         return response()->json(['message' => 'Updated successfully', 'data' => $note->load('labels')]);
     }
 
+    // REMEMBER: Please use post method to update the image
+    // ROUTE SHOULD BE: api/note-image/{id}_method=PUT
+    public function updateImage(Request $request, $id) {
+        $validatedData = $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $note = Auth::user()->notes()->findOrFail($id);
+        
+        if ($request->hasFile('image')) {
+            $imageName = time().'.'.$request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $imagePath = 'images/'.$imageName;
+        }
+        
+        $note->update(["image" => $imagePath]);
+
+        return response()->json(['message' => 'Update successfully', 'data' => $note->load('labels') ]);
+    }
+
     // Remove the specified post from storage
     public function destroy($id)
     {

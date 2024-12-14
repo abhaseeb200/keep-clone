@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/note', [NotesController::class, 'store']);
     Route::get('/note/{id}', [NotesController::class, 'show']);
     Route::put('/note/{id}', [NotesController::class, 'update']);
+    Route::post('/note-image/{id}', [NotesController::class, 'updateImage']);
     Route::delete('/note/{id}', [NotesController::class, 'destroy']);
 });
 
