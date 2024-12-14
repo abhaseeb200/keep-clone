@@ -45,6 +45,7 @@ const SearchBar = () => {
 
 const MainLayout = ({ openModal }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isListView, setIsListView] = useState(false);
     const [selectMultiple, setSelectMultiple] = useState([]);
 
     const { labels } = useSelector((state) => state?.label);
@@ -59,12 +60,14 @@ const MainLayout = ({ openModal }) => {
     const handleSignOut = async () => {
         await signOut();
     };
-    
+
     const handleRefresh = async () => {
-        // 
+        //
     };
 
-
+    const handleView = () => {
+        setIsListView(!isListView);
+    };
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -102,8 +105,13 @@ const MainLayout = ({ openModal }) => {
                 <div className="flex w-full items-center gap-40">
                     <SearchBar />
                     <div className="flex gap-6">
-                        <RefreshIcon className="cursor-pointer" onClick={handleRefresh} />
-                        <ListIcon />
+                        <RefreshIcon
+                            className="cursor-pointer"
+                            onClick={handleRefresh}
+                        />
+                        <div onClick={handleView}>
+                            {isListView ? "Gird View" : <ListIcon />}
+                        </div>
                     </div>
                 </div>
 
@@ -181,7 +189,7 @@ const MainLayout = ({ openModal }) => {
                 </div> */}
 
                 <main className="flex-1 p-6">
-                    <Outlet context={[selectMultiple, setSelectMultiple]} />
+                    <Outlet context={[selectMultiple, setSelectMultiple, isListView]} />
                 </main>
             </div>
         </div>

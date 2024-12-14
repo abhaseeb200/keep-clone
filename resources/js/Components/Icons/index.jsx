@@ -98,7 +98,7 @@ export const ListIcon = () => {
                     />
                 </g>
             </svg>
-            <Tooltip title="List" />
+            <Tooltip title="List View" />
         </div>
     );
 };

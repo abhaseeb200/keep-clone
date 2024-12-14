@@ -52,15 +52,6 @@ const LabelModal = ({ isOpen, closeModal }) => {
         });
     };
 
-    useEffect(() => {
-        if (isOpen) {
-            async function fetchLabels() {
-                await getLabels();
-            }
-            fetchLabels();
-        }
-    }, [isOpen]);
-
     return (
         <>
             {/* Modal */}

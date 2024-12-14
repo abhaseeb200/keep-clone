@@ -17,6 +17,7 @@ import { updateNoteReducer } from "@/Features/note/noteSlice";
 import useNotes from "@/Hooks/useNotes";
 import useDebounce from "@/Hooks/useDebounce";
 import useClickOutside from "@/Hooks/useClickOutside";
+import useLabels from "@/Hooks/useLabels";
 
 function Dashboard() {
     const [isMoreField, setIsMoreField] = useState(false);
@@ -29,12 +30,13 @@ function Dashboard() {
     const containerRef = useRef(null);
     const imageUploadRef = useRef(null);
 
-    const [selectMultiple, setSelectMultiple] = useOutletContext();
+    const [selectMultiple, setSelectMultiple, isListView] = useOutletContext();
 
     const dispatch = useDispatch();
     const { notes } = useSelector((state) => state?.note);
 
     const { getNotes, createNote, updateNote, updateNoteLabels } = useNotes();
+    const { getLabels } = useLabels();
 
     useClickOutside(containerRef, () => {
         setIsMoreField(false);
@@ -182,6 +184,13 @@ function Dashboard() {
         }
     };
 
+    useEffect(() => {
+        async function fetchLabels() {
+            await getLabels();
+        }
+        fetchLabels();
+    }, []);
+
     return (
         <div className="mt-8">
             <form
@@ -289,7 +298,7 @@ function Dashboard() {
 
             {/* ============== MASONRY NOTES CARDS ============== */}
             <div className="flex flex-wrap">
-                <Masonry columnsCount={4} gutter="18px">
+                <Masonry columnsCount={isListView ? 1 : 4} gutter="18px">
                     {notes?.map((note, index) => (
                         <Card
                             key={index}
