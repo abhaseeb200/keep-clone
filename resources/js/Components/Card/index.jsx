@@ -11,6 +11,7 @@ import {
 import LabelSelect from "@/Components/LabelSelect";
 import BackgroundOptions from "@/Components/BackgroundOptions";
 import useNotes from "@/Hooks/useNotes";
+import { useDrag, useDrop } from "react-dnd";
 
 const Card = ({
     data,
@@ -25,9 +26,12 @@ const Card = ({
     currentId,
     setCurrentId,
     handleUpdateBackgroundOption,
+    moveItem
 }) => {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
     const imageUploadRef = useRef(null);
+
+    const { id } = data;
 
     const { updateImageNote } = useNotes();
 
@@ -46,6 +50,22 @@ const Card = ({
             imageUploadRef.current.click();
         }
     };
+
+    const [, refDrag] = useDrag({
+        type: 'ITEM',
+        item: { id },
+      });
+    
+      const [, drop] = useDrop({
+        accept: 'ITEM',
+        hover: (draggedItem) => {
+          if (draggedItem.id !== id) {
+            moveItem(draggedItem.id, id);
+            draggedItem.id = id;
+          }
+        },
+      });
+
 
     return (
         <div className="relative">

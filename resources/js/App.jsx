@@ -10,6 +10,7 @@ import MainLayout from "@/Layouts/MainLayout";
 import LabelModal from "@/Components/LabelModal";
 import SignIn from "@/Screens/sign-in";
 import SignUp from "@/Screens/sign-up";
+import AppTest from "@/Screens/user";
 import ForgotPassword from "@/Screens/forgot-password";
 import Dashboard from "@/Screens/dashboard";
 
@@ -37,6 +38,7 @@ function App() {
                     {/* =============== PROTECTED ROUTES =============== */}
                     <Route element={<MainLayout openModal={openModal} />}>
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/user" element={<AppTest />} />
                     </Route>
                 </Routes>
             </Router>

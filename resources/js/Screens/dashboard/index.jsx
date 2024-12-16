@@ -18,6 +18,8 @@ import useNotes from "@/Hooks/useNotes";
 import useDebounce from "@/Hooks/useDebounce";
 import useClickOutside from "@/Hooks/useClickOutside";
 import useLabels from "@/Hooks/useLabels";
+import { DndProvider, useDrag } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function Dashboard() {
     const [isMoreField, setIsMoreField] = useState(false);
@@ -26,6 +28,7 @@ function Dashboard() {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
     const [background, setBackground] = useState("#fff");
     const [preview, setPreview] = useState(null);
+    const [droppedItems, setDroppedItems] = useState([]);
 
     const containerRef = useRef(null);
     const imageUploadRef = useRef(null);
@@ -297,29 +300,31 @@ function Dashboard() {
             </form>
 
             {/* ============== MASONRY NOTES CARDS ============== */}
-            <div className="flex flex-wrap">
-                <Masonry columnsCount={isListView ? 1 : 4} gutter="18px">
-                    {notes?.map((note, index) => (
-                        <Card
-                            key={index}
-                            data={note}
-                            selectMultiple={selectMultiple}
-                            currentId={currentId}
-                            handleUpdateBackgroundOption={
-                                handleUpdateBackgroundOption
-                            }
-                            setCurrentId={setCurrentId}
-                            handleOnSelect={handleOnSelect}
-                            handlePin={handlePin}
-                            handleArchived={handleArchived}
-                            handleTrash={handleTrash}
-                            handleSelectLabels={handleSelectLabels}
-                            handleLabelToggle={handleLabelToggle}
-                            handleRemoveLabel={handleRemoveLabel}
-                        />
-                    ))}
-                </Masonry>
-            </div>
+            <DndProvider backend={HTML5Backend}>
+                <div className="flex flex-wrap">
+                    <Masonry columnsCount={isListView ? 1 : 4} gutter="18px">
+                        {notes?.map((note, index) => (
+                            <Card
+                                key={index}
+                                data={note}
+                                selectMultiple={selectMultiple}
+                                currentId={currentId}
+                                handleUpdateBackgroundOption={
+                                    handleUpdateBackgroundOption
+                                }
+                                setCurrentId={setCurrentId}
+                                handleOnSelect={handleOnSelect}
+                                handlePin={handlePin}
+                                handleArchived={handleArchived}
+                                handleTrash={handleTrash}
+                                handleSelectLabels={handleSelectLabels}
+                                handleLabelToggle={handleLabelToggle}
+                                handleRemoveLabel={handleRemoveLabel}
+                            />
+                        ))}
+                    </Masonry>
+                </div>
+            </DndProvider>
         </div>
     );
 }
