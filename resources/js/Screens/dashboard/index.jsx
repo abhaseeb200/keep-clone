@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import { useOutletContext } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Masonry from "react-responsive-masonry";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import {
     ArchivedIcon,
-    ColorIcon,
     ImageUploadIcon,
     LabelIcon,
     PinIcon,
@@ -13,22 +14,18 @@ import {
 } from "@/Components/Icons";
 import Card from "@/Components/Card";
 import BackgroundOptions from "@/Components/BackgroundOptions";
-import { updateNoteReducer } from "@/Features/note/noteSlice";
+import { getNotesReducer, updateNoteReducer } from "@/Features/note/noteSlice";
 import useNotes from "@/Hooks/useNotes";
 import useDebounce from "@/Hooks/useDebounce";
 import useClickOutside from "@/Hooks/useClickOutside";
 import useLabels from "@/Hooks/useLabels";
-import { DndProvider, useDrag } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 function Dashboard() {
     const [isMoreField, setIsMoreField] = useState(false);
     const [currentId, setCurrentId] = useState(null);
-    //This state used for input form where the notes are created
-    const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
+    const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false); //This state used for input form where the notes are created
     const [background, setBackground] = useState("#fff");
     const [preview, setPreview] = useState(null);
-    const [droppedItems, setDroppedItems] = useState([]);
 
     const containerRef = useRef(null);
     const imageUploadRef = useRef(null);
@@ -37,6 +34,8 @@ function Dashboard() {
 
     const dispatch = useDispatch();
     const { notes } = useSelector((state) => state?.note);
+
+    const [sortingItems, setSortingItems] = useState([]); // Used for drag-and-drop
 
     const { getNotes, createNote, updateNote, updateNoteLabels } = useNotes();
     const { getLabels } = useLabels();
@@ -50,8 +49,14 @@ function Dashboard() {
         async function fetchNotes() {
             await getNotes();
         }
-        fetchNotes();
+        if (!notes?.length) {
+            fetchNotes();
+        }
     }, []);
+
+    useEffect(() => {
+        setSortingItems(notes.map((note) => note.id));
+    }, [notes]);
 
     const {
         register,
@@ -194,6 +199,25 @@ function Dashboard() {
         fetchLabels();
     }, []);
 
+    const handleDragEnd = (event) => {
+        const { active, over } = event;
+
+        if (active.id !== over.id) {
+            setSortingItems((prev) => {
+                const oldIndex = prev.indexOf(active.id);
+                const newIndex = prev.indexOf(over.id);
+                const newOrder = arrayMove(prev, oldIndex, newIndex);
+
+                const sortedNotes = newOrder.map((orderId) =>
+                    notes.find((note) => note.id === orderId)
+                );
+
+                dispatch(getNotesReducer(sortedNotes));
+                return newOrder;
+            });
+        }
+    };
+
     return (
         <div className="mt-8">
             <form
@@ -300,31 +324,44 @@ function Dashboard() {
             </form>
 
             {/* ============== MASONRY NOTES CARDS ============== */}
-            <DndProvider backend={HTML5Backend}>
-                <div className="flex flex-wrap">
-                    <Masonry columnsCount={isListView ? 1 : 4} gutter="18px">
-                        {notes?.map((note, index) => (
-                            <Card
-                                key={index}
-                                data={note}
-                                selectMultiple={selectMultiple}
-                                currentId={currentId}
-                                handleUpdateBackgroundOption={
-                                    handleUpdateBackgroundOption
-                                }
-                                setCurrentId={setCurrentId}
-                                handleOnSelect={handleOnSelect}
-                                handlePin={handlePin}
-                                handleArchived={handleArchived}
-                                handleTrash={handleTrash}
-                                handleSelectLabels={handleSelectLabels}
-                                handleLabelToggle={handleLabelToggle}
-                                handleRemoveLabel={handleRemoveLabel}
-                            />
-                        ))}
-                    </Masonry>
-                </div>
-            </DndProvider>
+            <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext items={sortingItems}>
+                    <div className="flex flex-wrap">
+                        <Masonry
+                            columnsCount={isListView ? 1 : 4}
+                            gutter="18px"
+                        >
+                            {sortingItems.map((id, index) => {
+                                const note = notes.find(
+                                    (note) => note.id === id
+                                );
+                                return (
+                                    <Card
+                                        key={index}
+                                        data={note}
+                                        selectMultiple={selectMultiple}
+                                        currentId={currentId}
+                                        handleUpdateBackgroundOption={
+                                            handleUpdateBackgroundOption
+                                        }
+                                        setCurrentId={setCurrentId}
+                                        handleOnSelect={handleOnSelect}
+                                        handlePin={handlePin}
+                                        handleArchived={handleArchived}
+                                        handleTrash={handleTrash}
+                                        handleSelectLabels={handleSelectLabels}
+                                        handleLabelToggle={handleLabelToggle}
+                                        handleRemoveLabel={handleRemoveLabel}
+                                    />
+                                );
+                            })}
+                        </Masonry>
+                    </div>
+                </SortableContext>
+            </DndContext>
         </div>
     );
 }

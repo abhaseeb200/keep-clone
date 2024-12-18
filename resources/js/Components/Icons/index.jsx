@@ -463,3 +463,24 @@ export const NoImageIcon = ({ className, onClick, title }) => {
         </>
     );
 };
+
+export const DragIcon = ({ className, onClick }) => {
+    return (
+        <div className="group/tooltip relative">
+            <svg
+                className={className}
+                onClick={onClick}
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <g strokeWidth={0} />
+                <g strokeLinecap="round" strokeLinejoin="round" />
+                <g>
+                    <path d="M7 2a2 2 0 10.001 4.001A2 2 0 007 2zm0 6a2 2 0 10.001 4.001A2 2 0 007 8zm0 6a2 2 0 10.001 4.001A2 2 0 007 14zm6-8a2 2 0 10-.001-4.001A2 2 0 0013 6zm0 2a2 2 0 10.001 4.001A2 2 0 0013 8zm0 6a2 2 0 10.001 4.001A2 2 0 0013 14z" />
+                </g>
+            </svg>
+
+            <Tooltip title="Drag note" />
+        </div>
+    );
+};

@@ -1,7 +1,10 @@
 import { useRef, useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
     ArchivedIcon,
     CrossIcon,
+    DragIcon,
     ImageUploadIcon,
     LabelIcon,
     PinIcon,
@@ -11,7 +14,6 @@ import {
 import LabelSelect from "@/Components/LabelSelect";
 import BackgroundOptions from "@/Components/BackgroundOptions";
 import useNotes from "@/Hooks/useNotes";
-import { useDrag, useDrop } from "react-dnd";
 
 const Card = ({
     data,
@@ -26,7 +28,6 @@ const Card = ({
     currentId,
     setCurrentId,
     handleUpdateBackgroundOption,
-    moveItem
 }) => {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
     const imageUploadRef = useRef(null);
@@ -51,24 +52,27 @@ const Card = ({
         }
     };
 
-    const [, refDrag] = useDrag({
-        type: 'ITEM',
-        item: { id },
-      });
-    
-      const [, drop] = useDrop({
-        accept: 'ITEM',
-        hover: (draggedItem) => {
-          if (draggedItem.id !== id) {
-            moveItem(draggedItem.id, id);
-            draggedItem.id = id;
-          }
-        },
-      });
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
 
+    const style = {
+        transform: transform ? CSS.Translate.toString(transform) : undefined,
+        transition,
+        cursor: isDragging ? "grabbing" : "pointer",
+        zIndex: isDragging ? 100 : "auto",
+        boxShadow: isDragging
+            ? "0px 8px 16px rgba(0, 0, 0, 0.3)"
+            : "0px 4px 8px rgba(0, 0, 0, 0.1)",
+    };
 
     return (
-        <div className="relative">
+        <div className="relative" ref={setNodeRef} style={style}>
             <div
                 className={`${
                     isSelected ? "border-gray-900" : "border-gray-200"
@@ -79,6 +83,19 @@ const Card = ({
                         : data.background,
                 }}
             >
+                {/* ============= DRAG ICONS =============*/}
+                <div
+                    className="absolute right-2 top-2 cursor-move"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <DragIcon
+                        className={`${
+                            isSelected ? "flex" : "show-on-hover"
+                        } bg-gray-50/50 hover:bg-gray-200 size-9 rounded-full p-2`}
+                    />
+                </div>
+
                 {/* ============= IMAGE =============*/}
                 {data?.image && (
                     <div className="rounded-t-lg overflow-hidden">
@@ -100,12 +117,6 @@ const Card = ({
                 <div className="px-4 pt-3">
                     <div className="font-medium text-lg flex justify-between mb-2">
                         {data?.title}
-                        <PinIcon
-                            onClick={() => handlePin(data)}
-                            className={`${
-                                isSelected ? "flex" : "show-on-hover"
-                            } cursor-pointer hover:bg-gray-200 size-10 -mt-2 rounded-full p-2`}
-                        />
                     </div>
                     <div className="text-sm">{data?.content}</div>
                 </div>
@@ -130,6 +141,10 @@ const Card = ({
 
                 {/* ============= OPTIONS - SHOW ON HOVER =============*/}
                 <div className="px-2 pb-2 flex gap-2 mt-2 show-on-hover">
+                    <PinIcon
+                        onClick={() => handlePin(data)}
+                        className="size-9 bg-soft-with-hover"
+                    />
                     <BackgroundOptions
                         isOpen={isBackgroundOptionOpen}
                         setIsOpen={setIsBackgroundOptionOpen}
