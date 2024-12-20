@@ -7,6 +7,7 @@ import {
     BulbIcon,
     ColorIcon,
     CrossIcon,
+    GridIcon,
     ImageUploadIcon,
     LabelIcon,
     ListIcon,
@@ -110,7 +111,7 @@ const MainLayout = ({ openModal }) => {
                             onClick={handleRefresh}
                         />
                         <div onClick={handleView}>
-                            {isListView ? "Gird View" : <ListIcon />}
+                            {isListView ? <GridIcon className="size-6"/> : <ListIcon className=""/>}
                         </div>
                     </div>
                 </div>
