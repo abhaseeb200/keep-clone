@@ -14,6 +14,7 @@ import {
 } from "@/Components/Icons";
 import Card from "@/Components/Card";
 import BackgroundOptions from "@/Components/BackgroundOptions";
+import CardModal from "@/Components/CardModal";
 import { getNotesReducer, updateNoteReducer } from "@/Features/note/noteSlice";
 import useNotes from "@/Hooks/useNotes";
 import useDebounce from "@/Hooks/useDebounce";
@@ -24,8 +25,11 @@ function Dashboard() {
     const [isMoreField, setIsMoreField] = useState(false);
     const [currentId, setCurrentId] = useState(null);
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false); //This state used for input form where the notes are created
+    const [sortingItems, setSortingItems] = useState([]); // Used for drag-and-drop
     const [background, setBackground] = useState("#fff");
     const [preview, setPreview] = useState(null);
+    const [selectedModalNote, setSelectedModalNote] = useState([]);
+    const [isOpenNote, setIsOpenNote] = useState(false);
 
     const containerRef = useRef(null);
     const imageUploadRef = useRef(null);
@@ -34,8 +38,6 @@ function Dashboard() {
 
     const dispatch = useDispatch();
     const { notes } = useSelector((state) => state?.note);
-
-    const [sortingItems, setSortingItems] = useState([]); // Used for drag-and-drop
 
     const { getNotes, createNote, updateNote, updateNoteLabels } = useNotes();
     const { getLabels } = useLabels();
@@ -49,6 +51,11 @@ function Dashboard() {
         async function fetchNotes() {
             await getNotes();
         }
+        async function fetchLabels() {
+            await getLabels();
+        }
+
+        fetchLabels();
         if (!notes?.length) {
             fetchNotes();
         }
@@ -192,13 +199,6 @@ function Dashboard() {
         }
     };
 
-    useEffect(() => {
-        async function fetchLabels() {
-            await getLabels();
-        }
-        fetchLabels();
-    }, []);
-
     const handleDragEnd = (event) => {
         const { active, over } = event;
 
@@ -216,6 +216,11 @@ function Dashboard() {
                 return newOrder;
             });
         }
+    };
+
+    const handleSelectModalNote = (data) => {
+        setSelectedModalNote(data);
+        setIsOpenNote(true);
     };
 
     return (
@@ -344,6 +349,7 @@ function Dashboard() {
                                         data={note}
                                         selectMultiple={selectMultiple}
                                         currentId={currentId}
+                                        setIsOpenNote={setIsOpenNote}
                                         handleUpdateBackgroundOption={
                                             handleUpdateBackgroundOption
                                         }
@@ -355,6 +361,9 @@ function Dashboard() {
                                         handleSelectLabels={handleSelectLabels}
                                         handleLabelToggle={handleLabelToggle}
                                         handleRemoveLabel={handleRemoveLabel}
+                                        handleSelectModalNote={
+                                            handleSelectModalNote
+                                        }
                                     />
                                 );
                             })}
@@ -362,6 +371,13 @@ function Dashboard() {
                     </div>
                 </SortableContext>
             </DndContext>
+
+            {/* ============== CARD MODAL ============== */}
+            <CardModal
+                isOpen={isOpenNote}
+                setIsOpenNote={setIsOpenNote}
+                data={selectedModalNote}
+            />
         </div>
     );
 }

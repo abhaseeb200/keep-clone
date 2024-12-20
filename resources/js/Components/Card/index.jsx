@@ -7,6 +7,7 @@ import {
     DragIcon,
     ImageUploadIcon,
     LabelIcon,
+    PencilIcon,
     PinIcon,
     TickIcon,
     TrashIcon,
@@ -28,6 +29,8 @@ const Card = ({
     currentId,
     setCurrentId,
     handleUpdateBackgroundOption,
+    handleSelectModalNote,
+    setIsOpenNote,
 }) => {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
     const imageUploadRef = useRef(null);
@@ -64,7 +67,7 @@ const Card = ({
     const style = {
         transform: transform ? CSS.Translate.toString(transform) : undefined,
         transition,
-        cursor: isDragging ? "grabbing" : "pointer",
+        cursor: isDragging ? "grabbing" : "",
         zIndex: isDragging ? 100 : "auto",
         boxShadow: isDragging
             ? "0px 8px 16px rgba(0, 0, 0, 0.3)"
@@ -98,7 +101,10 @@ const Card = ({
 
                 {/* ============= IMAGE =============*/}
                 {data?.image && (
-                    <div className="rounded-t-lg overflow-hidden">
+                    <div
+                        className="rounded-t-lg overflow-hidden cursor-pointer"
+                        onClick={() => handleSelectModalNote(data)}
+                    >
                         <img src={data?.image} alt="card-image" />
                     </div>
                 )}
@@ -113,8 +119,11 @@ const Card = ({
                     />
                 </div>
 
-                {/* ============= CONTENT =============*/}
-                <div className="px-4 pt-3">
+                {/* ============= CONTENT WITH TITLE =============*/}
+                <div
+                    className="px-4 pt-3 cursor-text"
+                    onClick={() => handleSelectModalNote(data)}
+                >
                     <div className="font-medium text-lg flex justify-between mb-2">
                         {data?.title}
                     </div>
@@ -167,6 +176,10 @@ const Card = ({
                             handleLabelToggle(data);
                         }}
                         className="bg-soft-with-hover size-9"
+                    />
+                    <PencilIcon
+                        className="bg-soft-with-hover size-9"
+                        onClick={() => setIsOpenNote(true)}
                     />
                     <TrashIcon
                         onClick={() => handleTrash(data)}
