@@ -8,12 +8,37 @@ import {
     PinIcon,
     TrashIcon,
 } from "@/Components/Icons";
-import BackgroundOptions from "../BackgroundOptions";
+import BackgroundOptions from "@/Components/BackgroundOptions";
 import useClickOutside from "@/Hooks/useClickOutside";
 import useDebounce from "@/Hooks/useDebounce";
+import useNotes from "@/Hooks/useNotes";
+import useHandler from "@/Hooks/useHandler";
+import LabelSelect from "../LabelSelect";
+import { useSelector } from "react-redux";
 
 const CardModal = ({ isOpen, setIsOpenNote, data }) => {
+    const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
+    const [currentId, setCurrentId] = useState(null);
     const noteModalRef = useRef(null);
+
+    const { updateNote } = useNotes();
+    const {
+        handlePin,
+        handleArchived,
+        handleTrash,
+        handleSelectLabels,
+        handleRemoveLabel,
+        handleBackgroundOption,
+        handleUpdateBackgroundOption,
+        handleFileChange,
+        handleImageUploadRef,
+        handleSelectModalNote,
+    } = useHandler();
+
+    const handleLabelToggle = (data) => {
+        setCurrentId(data.id);
+        // setCurrentId((prevId) => (prevId === data.id ? null : data.id));
+    };
 
     useClickOutside(noteModalRef, () => setIsOpenNote(false));
 
@@ -26,17 +51,19 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
 
     const handleOnChange = (field, value) => {
         setValue(field, value);
-        return console.log(field, value);
-        debouncedChangeHandler(field, value)
+        debouncedChangeHandler(field, value);
     };
 
-    const debouncedChangeHandler = useDebounce((data) => {
-        
-    }, 3000);
+    const debouncedChangeHandler = useDebounce((field, value) => {
+        let isShowToast = false;
+        updateNote({ ...data, [field]: value }, isShowToast);
+    }, 1000);
 
     useEffect(() => {
         return () => {
             reset();
+            setIsBackgroundOptionOpen(false);
+            // setCurrentId(null);
         };
     }, [isOpen]);
 
@@ -45,9 +72,9 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <div
-                        className="shadow-lg w-[600px] rounded-lg bg-white"
+                        className="shadow-lg w-[600px] rounded-lg bg-white relative"
                         style={{
-                            background: data?.background.includes("background")
+                            background: data?.background?.includes("background")
                                 ? `url(${data.background})`
                                 : data.background,
                         }}
@@ -91,7 +118,10 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                                     defaultValue={data.content}
                                     {...register("content")}
                                     onChange={(e) => {
-                                        handleOnChange("content",e.target.value);
+                                        handleOnChange(
+                                            "content",
+                                            e.target.value
+                                        );
                                     }}
                                 />
                             </div>
@@ -107,9 +137,9 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                                             {label?.name}
                                         </span>
                                         <CrossIcon
-                                            // onClick={() =>
-                                            //     handleRemoveLabel(label, data)
-                                            // }
+                                            onClick={() =>
+                                                handleRemoveLabel(label, data)
+                                            }
                                             className="absolute right-0 group-hover/edit:block hidden size-4 mt-0.5 cursor-pointer hover:bg-slate-400 rounded-full p-0.5"
                                         />
                                     </div>
@@ -122,16 +152,16 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                             <div className="flex justify-between items-center px-2">
                                 <div className="pb-2 flex gap-3 mt-2">
                                     <PinIcon
-                                        // onClick={() => handlePin(data)}
+                                        onClick={() => handlePin(data)}
                                         className="size-9 bg-soft-with-hover"
                                     />
                                     <BackgroundOptions
-                                    // isOpen={isBackgroundOptionOpen}
-                                    // setIsOpen={setIsBackgroundOptionOpen}
-                                    // data={data}
-                                    // handleBackgroundOption={
-                                    //     handleUpdateBackgroundOption
-                                    // }
+                                        data={data}
+                                        isOpen={isBackgroundOptionOpen}
+                                        setIsOpen={setIsBackgroundOptionOpen}
+                                        handleBackgroundOption={
+                                            handleUpdateBackgroundOption
+                                        }
                                     />
                                     <ImageUploadIcon
                                         className="bg-soft-with-hover size-9"
@@ -140,18 +170,18 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                                         // handleImageUploadRef={handleImageUploadRef}
                                     />
                                     <ArchivedIcon
-                                        // onClick={() => handleArchived(data)}
+                                        onClick={() => handleArchived(data)}
                                         className="bg-soft-with-hover size-9"
                                     />
                                     <LabelIcon
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            // handleLabelToggle(data);
+                                            handleLabelToggle(data);
                                         }}
                                         className="bg-soft-with-hover size-9"
                                     />
                                     <TrashIcon
-                                        // onClick={() => handleTrash(data)}
+                                        onClick={() => handleTrash(data)}
                                         className="bg-soft-with-hover size-9"
                                     />
                                 </div>
@@ -165,6 +195,13 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                                 </button>
                             </div>
                         </div>
+
+                        <LabelSelect
+                            className="absolute bottom-16 left-48"
+                            note={data}
+                            currentId={currentId}
+                            setCurrentId={setCurrentId}
+                        />
                     </div>
                 </div>
             )}
