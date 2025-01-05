@@ -17,30 +17,38 @@ import BackgroundOptions from "@/Components/BackgroundOptions";
 import CardModal from "@/Components/CardModal";
 import { getNotesReducer, updateNoteReducer } from "@/Features/note/noteSlice";
 import useNotes from "@/Hooks/useNotes";
-import useDebounce from "@/Hooks/useDebounce";
 import useClickOutside from "@/Hooks/useClickOutside";
 import useLabels from "@/Hooks/useLabels";
+import useHandler from "@/Hooks/useHandler";
 
 function Dashboard() {
     const [isMoreField, setIsMoreField] = useState(false);
-    const [currentId, setCurrentId] = useState(null);
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false); //This state used for input form where the notes are created
     const [sortingItems, setSortingItems] = useState([]); // Used for drag-and-drop
     const [background, setBackground] = useState("#fff");
     const [preview, setPreview] = useState(null);
-    const [selectedModalNote, setSelectedModalNote] = useState([]);
+    const [selectedModalNote, setSelectedModalNote] = useState({});
     const [isOpenNote, setIsOpenNote] = useState(false);
+    const [currentId, setCurrentId] = useState(null);
 
     const containerRef = useRef(null);
     const imageUploadRef = useRef(null);
 
     const [selectMultiple, setSelectMultiple, isListView] = useOutletContext();
 
-    const dispatch = useDispatch();
     const { notes } = useSelector((state) => state?.note);
 
-    const { getNotes, createNote, updateNote, updateNoteLabels } = useNotes();
+    const dispatch = useDispatch();
+
+    const { getNotes, createNote } = useNotes();
     const { getLabels } = useLabels();
+
+    const {
+        handleClose,
+        handleBackgroundOption,
+        handleFileChange,
+        handleImageUploadRef,
+    } = useHandler();
 
     useClickOutside(containerRef, () => {
         setIsMoreField(false);
@@ -63,7 +71,7 @@ function Dashboard() {
 
     useEffect(() => {
         setSortingItems(notes.map((note) => note.id));
-    }, [notes]);
+    }, []);
 
     const {
         register,
@@ -75,128 +83,6 @@ function Dashboard() {
 
     const onSubmit = async (data) => {
         await createNote(data);
-    };
-
-    const handleClose = (e) => {
-        e.stopPropagation();
-        setIsMoreField(false);
-        reset();
-    };
-
-    const handleOnSelect = (data) => {
-        let isExists = selectMultiple.find((item) => item?.id == data?.id);
-        let duplicate = [...selectMultiple];
-
-        if (isExists) {
-            duplicate = selectMultiple.filter((i) => i?.id !== isExists?.id);
-        } else {
-            duplicate.push(data);
-        }
-
-        setSelectMultiple(duplicate);
-    };
-
-    const handlePin = async (data) => {
-        let updatedPin;
-        if (data?.isPinned) {
-            updatedPin = { ...data, isPinned: false };
-        } else {
-            updatedPin = { ...data, isPinned: true };
-        }
-        await updateNote(updatedPin);
-    };
-
-    const handleArchived = async (data) => {
-        let updatedArchived;
-        if (data?.isArchived) {
-            updatedArchived = { ...data, isArchived: false };
-        } else {
-            updatedArchived = { ...data, isArchived: true };
-        }
-        await updateNote(updatedArchived);
-    };
-
-    const handleTrash = async (data) => {
-        console.log(data, "TRASH NOTE...");
-    };
-
-    const handleSelectLabels = async (label, note) => {
-        let isExists = note.labels.find((i) => i?.id == label?.id);
-        let newLabels,
-            newLabelsId = [];
-
-        if (isExists) {
-            newLabels = note.labels.filter((i) => i.id !== isExists.id);
-        } else {
-            newLabels = [...note.labels, label];
-        }
-
-        newLabelsId = newLabels.map((i) => i?.id);
-
-        dispatch(updateNoteReducer({ ...note, labels: newLabels }));
-
-        debouncedChangeHandler({ ...note, labels: newLabelsId });
-    };
-
-    const debouncedChangeHandler = useDebounce((data) => {
-        updateNoteLabels(data);
-    }, 3000);
-
-    const handleLabelToggle = (data) => {
-        setCurrentId((prevId) => (prevId === data.id ? null : data.id));
-    };
-
-    const handleRemoveLabel = (label, note) => {
-        let newLabels = note.labels.filter((i) => i.id !== label.id);
-        let newLabelsId = newLabels.map((i) => i.id);
-
-        dispatch(updateNoteReducer({ ...note, labels: newLabels }));
-        updateNoteLabels({ ...note, labels: newLabelsId });
-    };
-
-    const handleBackgroundOption = (data) => {
-        if (Object.keys(data).includes("url")) {
-            return setBackground(`url(${data?.url})`);
-        }
-
-        setBackground(data?.code);
-    };
-
-    const handleUpdateBackgroundOption = async (option, note) => {
-        let background;
-        if (Object.keys(option).includes("url")) {
-            background = option?.url;
-        } else {
-            background = option?.code;
-        }
-
-        //Remove labels from it
-        const { labels, ...remainNote } = note;
-
-        await updateNote({
-            ...remainNote,
-            background: background,
-        });
-    };
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setPreview(e.target.result);
-            };
-            reader.readAsDataURL(file);
-
-            setIsMoreField(true);
-            setValue("image", file);
-        }
-    };
-
-    const handleImageUploadRef = () => {
-        if (imageUploadRef.current) {
-            imageUploadRef.current.click();
-        }
     };
 
     const handleDragEnd = (event) => {
@@ -218,10 +104,13 @@ function Dashboard() {
         }
     };
 
-    const handleSelectModalNote = (data) => {
-        setSelectedModalNote(data);
-        setIsOpenNote(true);
+    const handleLabelToggle = (data) => {
+        setCurrentId((prevId) => (prevId === data.id ? null : data.id));
     };
+
+    useEffect(() => {
+        setSelectedModalNote(notes.find((note) => note.id == selectedModalNote?.id));
+    }, [notes]);
 
     return (
         <div className="mt-8">
@@ -280,9 +169,18 @@ function Dashboard() {
                         className={`bg-soft-with-hover size-9 ${
                             isMoreField ? "hidden" : "block"
                         }`}
-                        handleFileChange={handleFileChange}
+                        handleFileChange={(e) =>
+                            handleFileChange(
+                                e,
+                                setPreview,
+                                setIsMoreField,
+                                setValue
+                            )
+                        }
                         imageUploadRef={imageUploadRef}
-                        handleImageUploadRef={handleImageUploadRef}
+                        handleImageUploadRef={() =>
+                            handleImageUploadRef(imageUploadRef)
+                        }
                         register={register}
                     />
                 </div>
@@ -297,13 +195,24 @@ function Dashboard() {
                         <BackgroundOptions
                             isOpen={isBackgroundOptionOpen}
                             setIsOpen={setIsBackgroundOptionOpen}
-                            handleBackgroundOption={handleBackgroundOption}
+                            handleBackgroundOption={(data) =>
+                                handleBackgroundOption(data, setBackground)
+                            }
                         />
                         <ImageUploadIcon
                             className="bg-soft-with-hover size-9"
-                            handleFileChange={handleFileChange}
+                            handleFileChange={(e) =>
+                                handleFileChange(
+                                    e,
+                                    setPreview,
+                                    setIsMoreField,
+                                    setValue
+                                )
+                            }
                             imageUploadRef={imageUploadRef}
-                            handleImageUploadRef={handleImageUploadRef}
+                            handleImageUploadRef={() =>
+                                handleImageUploadRef(imageUploadRef)
+                            }
                             register={register}
                         />
                         <ArchivedIcon className="bg-soft-with-hover size-9" />
@@ -314,7 +223,9 @@ function Dashboard() {
                         <button
                             className="hover:bg-gray-100 cursor-pointer px-3 py-2"
                             type="button"
-                            onClick={handleClose}
+                            onClick={(e) =>
+                                handleClose(e, setIsMoreField, reset)
+                            }
                         >
                             Close
                         </button>
@@ -339,31 +250,22 @@ function Dashboard() {
                             columnsCount={isListView ? 1 : 4}
                             gutter="18px"
                         >
-                            {sortingItems.map((id, index) => {
+                            {sortingItems.map((id) => {
                                 const note = notes.find(
                                     (note) => note.id === id
                                 );
                                 return (
                                     <Card
-                                        key={index}
+                                        key={note?.id}
                                         data={note}
-                                        selectMultiple={selectMultiple}
                                         currentId={currentId}
-                                        setIsOpenNote={setIsOpenNote}
-                                        handleUpdateBackgroundOption={
-                                            handleUpdateBackgroundOption
-                                        }
                                         setCurrentId={setCurrentId}
-                                        handleOnSelect={handleOnSelect}
-                                        handlePin={handlePin}
-                                        handleArchived={handleArchived}
-                                        handleTrash={handleTrash}
-                                        handleSelectLabels={handleSelectLabels}
+                                        selectMultiple={selectMultiple}
                                         handleLabelToggle={handleLabelToggle}
-                                        handleRemoveLabel={handleRemoveLabel}
-                                        handleSelectModalNote={
-                                            handleSelectModalNote
+                                        setSelectedModalNote={
+                                            setSelectedModalNote
                                         }
+                                        setIsOpenNote={setIsOpenNote}
                                     />
                                 );
                             })}
