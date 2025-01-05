@@ -129,7 +129,7 @@ class NotesController extends Controller
             'image' => $imagePath ?? "",
             'isPinned' => $request->input('isPinned'),
             'isArchived' => $request->input('isArchived'),
-            'background' => $request->input('background')
+            'background' => $request->input('background') ?? ""
         ]);
 
         // Sync labels if provided
