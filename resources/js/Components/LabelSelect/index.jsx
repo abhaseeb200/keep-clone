@@ -3,18 +3,15 @@ import { useSelector } from "react-redux";
 import { PlusIcon, SearchIcon } from "@/Components/Icons";
 import useClickOutside from "@/Hooks/useClickOutside";
 import useLabels from "@/Hooks/useLabels";
+import useHandler from "@/Hooks/useHandler";
 
-const LabelSelect = ({
-    className,
-    note,
-    handleSelectLabels,
-    currentId,
-    setCurrentId,
-}) => {
-    const [labelsCopy, setLabelsCopy] = useState([]);
+const LabelSelect = ({ className, note, currentId = null, setCurrentId }) => {
+    const [labelsCopy, setLabelsCopy] = useState([]); //Create a BackUp copy for searching labels
     const [searchValue, setSearchValue] = useState("");
 
     const { createLabel, isLoading } = useLabels();
+    const { handleSelectLabels } = useHandler();
+
     const { labels } = useSelector((state) => state?.label);
 
     const containerRef = useRef(null);
@@ -53,7 +50,7 @@ const LabelSelect = ({
             {currentId == note?.id && (
                 <div
                     ref={containerRef}
-                    className={`bg-white shadow-lg min-w-52 ${className}`}
+                    className={`bg-white shadow-lg min-w-52 z-50 ${className}`}
                 >
                     <h3 className="text-sm font-medium pb-1 p-2">
                         Labels notes {note?.id}
