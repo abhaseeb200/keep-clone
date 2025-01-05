@@ -55,13 +55,16 @@ const useNotes = () => {
     };
 
     // REMEMBER: PASS FROM_DATA IN THE BODY
-    const updateNote = async (body) => {
+    const updateNote = async (body, isShowToast = true) => {
         try {
             // REMOVE IMAGE FROM THE OBJECT
             delete body.image;
+            // REMOVE LABELS FROM THE OBJECT
+            delete body.labels;
+            
             const response = await API.put(`/note/${body.id}`, body);
             dispatch(updateNoteReducer(response?.data?.data));
-            toast.success(response?.data?.message);
+            isShowToast && toast.success(response?.data?.message);
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
         } finally {
@@ -79,11 +82,15 @@ const useNotes = () => {
         });
 
         try {
-            const response = await API.post(`/note-image/${body.id}_method=PUT`, body, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const response = await API.post(
+                `/note-image/${body.id}_method=PUT`,
+                body,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             dispatch(updateNoteReducer(response?.data?.data));
             toast.success(response?.data?.message);
         } catch (error) {
