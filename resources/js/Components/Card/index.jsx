@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -15,25 +15,29 @@ import {
 import LabelSelect from "@/Components/LabelSelect";
 import BackgroundOptions from "@/Components/BackgroundOptions";
 import useNotes from "@/Hooks/useNotes";
+import useHandler from "@/Hooks/useHandler";
 
 const Card = ({
     data,
-    handleOnSelect,
     selectMultiple,
-    handlePin,
-    handleTrash,
-    handleArchived,
-    handleSelectLabels,
-    handleLabelToggle,
-    handleRemoveLabel,
-    currentId,
-    setCurrentId,
-    handleUpdateBackgroundOption,
-    handleSelectModalNote,
+    setSelectedModalNote,
     setIsOpenNote,
+    currentId,
+    handleLabelToggle,
+    setCurrentId,
 }) => {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
     const imageUploadRef = useRef(null);
+
+    const {
+        handleOnSelect,
+        handlePin,
+        handleArchived,
+        handleTrash,
+        handleRemoveLabel,
+        handleUpdateBackgroundOption,
+        handleSelectModalNote,
+    } = useHandler();
 
     const { id } = data;
 
@@ -81,7 +85,7 @@ const Card = ({
                     isSelected ? "border-gray-900" : "border-gray-200"
                 } group border bg-white rounded-lg relative hover:shadow-lg`}
                 style={{
-                    background: data?.background.includes("background")
+                    background: data?.background?.includes("background")
                         ? `url(${data.background})`
                         : data.background,
                 }}
@@ -103,7 +107,13 @@ const Card = ({
                 {data?.image && (
                     <div
                         className="rounded-t-lg overflow-hidden cursor-pointer"
-                        onClick={() => handleSelectModalNote(data)}
+                        onClick={() =>
+                            handleSelectModalNote(
+                                data,
+                                setSelectedModalNote,
+                                setIsOpenNote
+                            )
+                        }
                     >
                         <img src={data?.image} alt="card-image" />
                     </div>
@@ -122,7 +132,13 @@ const Card = ({
                 {/* ============= CONTENT WITH TITLE =============*/}
                 <div
                     className="px-4 pt-3 cursor-text"
-                    onClick={() => handleSelectModalNote(data)}
+                    onClick={() =>
+                        handleSelectModalNote(
+                            data,
+                            setSelectedModalNote,
+                            setIsOpenNote
+                        )
+                    }
                 >
                     <div className="font-medium text-lg flex justify-between mb-2">
                         {data?.title}
@@ -179,7 +195,13 @@ const Card = ({
                     />
                     <PencilIcon
                         className="bg-soft-with-hover size-9"
-                        onClick={() => setIsOpenNote(true)}
+                        onClick={() =>
+                            handleSelectModalNote(
+                                data,
+                                setSelectedModalNote,
+                                setIsOpenNote
+                            )
+                        }
                     />
                     <TrashIcon
                         onClick={() => handleTrash(data)}
@@ -193,7 +215,6 @@ const Card = ({
                 note={data}
                 currentId={currentId}
                 setCurrentId={setCurrentId}
-                handleSelectLabels={handleSelectLabels}
             />
         </div>
     );
