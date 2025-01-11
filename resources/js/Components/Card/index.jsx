@@ -3,6 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
     ArchivedIcon,
+    CopyIcon,
     CrossIcon,
     DragIcon,
     ImageUploadIcon,
@@ -14,8 +15,8 @@ import {
 } from "@/Components/Icons";
 import LabelSelect from "@/Components/LabelSelect";
 import BackgroundOptions from "@/Components/BackgroundOptions";
-import useNotes from "@/Hooks/useNotes";
 import useHandler from "@/Hooks/useHandler";
+import useImageUpload from "@/Hooks/useImageUpload";
 
 const Card = ({
     data,
@@ -27,8 +28,6 @@ const Card = ({
     setCurrentId,
 }) => {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
-    const imageUploadRef = useRef(null);
-
     const {
         handleOnSelect,
         handlePin,
@@ -37,27 +36,15 @@ const Card = ({
         handleRemoveLabel,
         handleUpdateBackgroundOption,
         handleSelectModalNote,
+        handleCopyNote,
+        handleSelectLabels
     } = useHandler();
 
-    const { id } = data;
+    const { handleFileChangeUpdate, handleImageUploadRef, imageUploadRef } = useImageUpload();
 
-    const { updateImageNote } = useNotes();
+    const id = data?.id;
 
     let isSelected = selectMultiple?.some((i) => i?.id == data?.id);
-
-    const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const { id } = data;
-            await updateImageNote({ id, image: file });
-        }
-    };
-
-    const handleImageUploadRef = () => {
-        if (imageUploadRef.current) {
-            imageUploadRef.current.click();
-        }
-    };
 
     const {
         attributes,
@@ -86,8 +73,8 @@ const Card = ({
                 } group border bg-white rounded-lg relative hover:shadow-lg`}
                 style={{
                     background: data?.background?.includes("background")
-                        ? `url(${data.background})`
-                        : data.background,
+                        ? `url(${data?.background})`
+                        : data?.background,
                 }}
             >
                 {/* ============= DRAG ICONS =============*/}
@@ -178,9 +165,13 @@ const Card = ({
                     />
                     <ImageUploadIcon
                         className="bg-soft-with-hover size-9"
-                        handleFileChange={handleFileChange}
+                        handleFileChange={(event) =>
+                            handleFileChangeUpdate(event, data)
+                        }
                         imageUploadRef={imageUploadRef}
-                        handleImageUploadRef={handleImageUploadRef}
+                        handleImageUploadRef={() =>
+                            handleImageUploadRef(imageUploadRef)
+                        }
                     />
                     <ArchivedIcon
                         onClick={() => handleArchived(data)}
@@ -203,6 +194,10 @@ const Card = ({
                             )
                         }
                     />
+                    <CopyIcon
+                        className="bg-soft-with-hover size-9"
+                        onClick={() => handleCopyNote(data)}
+                    />
                     <TrashIcon
                         onClick={() => handleTrash(data)}
                         className="bg-soft-with-hover size-9"
@@ -215,6 +210,7 @@ const Card = ({
                 note={data}
                 currentId={currentId}
                 setCurrentId={setCurrentId}
+                handleSelectLabels={handleSelectLabels}
             />
         </div>
     );

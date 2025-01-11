@@ -5,18 +5,28 @@ import useClickOutside from "@/Hooks/useClickOutside";
 import useLabels from "@/Hooks/useLabels";
 import useHandler from "@/Hooks/useHandler";
 
-const LabelSelect = ({ className, note, currentId = null, setCurrentId }) => {
+const LabelSelect = ({
+    className,
+    note,
+    currentId = null,
+    setCurrentId,
+    isOpen,
+    handleSelectLabels // does't not used from useHook due to the different context
+}) => {
     const [labelsCopy, setLabelsCopy] = useState([]); //Create a BackUp copy for searching labels
     const [searchValue, setSearchValue] = useState("");
 
     const { createLabel, isLoading } = useLabels();
-    const { handleSelectLabels } = useHandler();
 
     const { labels } = useSelector((state) => state?.label);
 
+    // const { handleSelectLabels } = useHandler();
+
     const containerRef = useRef(null);
 
-    useClickOutside(containerRef, () => setCurrentId(null));
+    useClickOutside(containerRef, () => {
+        setCurrentId && setCurrentId(null);
+    });
 
     const handleSearchValue = (event) => {
         let value = event.target.value;
@@ -47,7 +57,7 @@ const LabelSelect = ({ className, note, currentId = null, setCurrentId }) => {
 
     return (
         <>
-            {currentId == note?.id && (
+            {(currentId === note?.id || isOpen) && (
                 <div
                     ref={containerRef}
                     className={`bg-white shadow-lg min-w-52 z-50 ${className}`}

@@ -15,6 +15,7 @@ import useNotes from "@/Hooks/useNotes";
 import useHandler from "@/Hooks/useHandler";
 import LabelSelect from "../LabelSelect";
 import { useSelector } from "react-redux";
+import useImageUpload from "@/Hooks/useImageUpload";
 
 const CardModal = ({ isOpen, setIsOpenNote, data }) => {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
@@ -31,9 +32,10 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
         handleBackgroundOption,
         handleUpdateBackgroundOption,
         handleFileChange,
-        handleImageUploadRef,
         handleSelectModalNote,
     } = useHandler();
+
+    const { handleFileChangeUpdate, handleImageUploadRef, imageUploadRef } = useImageUpload()
 
     const handleLabelToggle = (data) => {
         setCurrentId(data.id);
@@ -165,9 +167,13 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                                     />
                                     <ImageUploadIcon
                                         className="bg-soft-with-hover size-9"
-                                        // handleFileChange={handleFileChange}
-                                        // imageUploadRef={imageUploadRef}
-                                        // handleImageUploadRef={handleImageUploadRef}
+                                        handleFileChange={(event) =>
+                                            handleFileChangeUpdate(event, data)
+                                        }
+                                        imageUploadRef={imageUploadRef}
+                                        handleImageUploadRef={() =>
+                                            handleImageUploadRef(imageUploadRef)
+                                        }
                                     />
                                     <ArchivedIcon
                                         onClick={() => handleArchived(data)}
@@ -201,6 +207,7 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                             note={data}
                             currentId={currentId}
                             setCurrentId={setCurrentId}
+                            handleSelectLabels={handleSelectLabels}
                         />
                     </div>
                 </div>
