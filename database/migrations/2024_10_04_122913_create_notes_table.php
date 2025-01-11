@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('title');
             $table->string('image');
             $table->text('content');
-            $table->boolean('isPinned')->default(false);
-            $table->boolean('isArchived')->default(false);
-            $table->string('background');
+            $table->boolean('isPinned')->default(false); //it should be nullable
+            $table->boolean('isArchived')->default(false); //it should be nullable
+            $table->string('background'); //it should be nullable
             $table->timestamps();
         });
     }
