@@ -71,15 +71,18 @@ class NotesController extends Controller
             $imagePath = 'images/'.$imageName;
             // $image = $request->file('image');
             // $imagePath = $image->store('images', 'public');
+        } else {
+            // Use the existing image URL if available (for copying)
+            $imagePath = $request->input('image_url') ?? '';
         }
         
         $note = Auth::user()->notes()->create([
             'title' => $request->input('title'),
             'content' => $request->input('content'),
-            'image' => $imagePath ?? "",
-            'isPinned' => $request->input('isPinned', false),
-            'isArchived' => $request->input('isArchived', false),
-            'background' => $request->input('background', '')
+            'image' => $imagePath,
+            'isPinned' => $request->input('isPinned'),
+            'isArchived' => $request->input('isArchived'),
+            'background' => $request->input('background')
         ]);
 
          // Attach labels if provided
