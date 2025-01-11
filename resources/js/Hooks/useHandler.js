@@ -6,7 +6,7 @@ import useNotes from "@/Hooks/useNotes";
 import useDebounce from "@/Hooks/useDebounce";
 
 const useHandler = () => {
-    const { updateNote, updateNoteLabels } = useNotes();
+    const { updateNote, updateNoteLabels, deleteNote, createNote } = useNotes();
 
     const dispatch = useDispatch();
     const [selectMultiple, setSelectMultiple] = useOutletContext();
@@ -51,7 +51,20 @@ const useHandler = () => {
     };
 
     const handleTrash = async (data) => {
-        console.log(data, "TRASH NOTE...");
+        await deleteNote(data?.id);
+    };
+
+    const handleCopyNote = async (data) => {
+        let labelsId = data.labels.map((i) => i?.id);
+        let modifiedData = {
+            ...data,
+            labels: labelsId,
+            image_url: data.image,
+            image: null,
+        };
+        // return console.log(modifiedData);
+
+        await createNote(modifiedData);
     };
 
     const handleSelectLabels = async (label, note) => {
@@ -156,6 +169,7 @@ const useHandler = () => {
         handleFileChange,
         handleImageUploadRef,
         handleSelectModalNote,
+        handleCopyNote,
     };
 };
 
