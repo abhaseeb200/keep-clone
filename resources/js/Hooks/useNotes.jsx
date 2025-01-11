@@ -25,20 +25,7 @@ const useNotes = () => {
         }
     };
 
-    const createNote = async (body) => {
-        // CREATE A FORM DATA
-        const formData = new FormData();
-        Object.keys(body).forEach((key) => {
-            const value = body[key];
-            if (Array.isArray(value)) {
-                value.forEach((item, index) => {
-                    formData.append(`${key}[${index}]`, item);
-                });
-            } else {
-                formData.append(key, value);
-            }
-        });
-
+    const createNote = async (body, reset, handleClearImage, setBackground) => {
         try {
             const response = await API.post("/note", body, {
                 headers: {
@@ -47,6 +34,9 @@ const useNotes = () => {
             });
             dispatch(createNoteReducer(response.data.data));
             toast.success(response.data.message);
+            setBackground && setBackground("");
+            handleClearImage && handleClearImage();
+            reset && reset();
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
         } finally {
@@ -61,7 +51,7 @@ const useNotes = () => {
             delete body.image;
             // REMOVE LABELS FROM THE OBJECT
             delete body.labels;
-            
+
             const response = await API.put(`/note/${body.id}`, body);
             dispatch(updateNoteReducer(response?.data?.data));
             isShowToast && toast.success(response?.data?.message);
