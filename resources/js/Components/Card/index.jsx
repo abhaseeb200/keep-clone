@@ -3,11 +3,14 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
     ArchivedIcon,
+    CollaborateIcon,
     CopyIcon,
     CrossIcon,
     DragIcon,
+    DrawIcon,
     ImageUploadIcon,
     LabelIcon,
+    MoreIcon,
     PencilIcon,
     PinIcon,
     TickIcon,
@@ -17,6 +20,8 @@ import LabelSelect from "@/Components/LabelSelect";
 import BackgroundOptions from "@/Components/BackgroundOptions";
 import useHandler from "@/Hooks/useHandler";
 import useImageUpload from "@/Hooks/useImageUpload";
+import useClickOutside from "@/Hooks/useClickOutside";
+import DrawingModal from "../DrawingModal";
 
 const Card = ({
     data,
@@ -28,6 +33,13 @@ const Card = ({
     setCurrentId,
 }) => {
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
+    const [isMoreOption, setIsMoreOption] = useState(false);
+    const [isDrawingOpen, setIsDrawingOpen] = useState(false);
+
+    const moreOptionRef = useRef(null);
+
+    useClickOutside(moreOptionRef, () => setIsMoreOption(false));
+
     const {
         handleOnSelect,
         handlePin,
@@ -37,10 +49,11 @@ const Card = ({
         handleUpdateBackgroundOption,
         handleSelectModalNote,
         handleCopyNote,
-        handleSelectLabels
+        handleSelectLabels,
     } = useHandler();
 
-    const { handleFileChangeUpdate, handleImageUploadRef, imageUploadRef } = useImageUpload();
+    const { handleFileChangeUpdate, handleImageUploadRef, imageUploadRef } =
+        useImageUpload();
 
     const id = data?.id;
 
@@ -65,6 +78,14 @@ const Card = ({
             : "0px 4px 8px rgba(0, 0, 0, 0.1)",
     };
 
+    const handleMoreOption = () => {
+        setIsMoreOption(!isMoreOption);
+    };
+
+    const handleDrawingToggle = () => {
+        setIsDrawingOpen(!isDrawingOpen);
+    };
+
     return (
         <div className="relative" ref={setNodeRef} style={style}>
             <div
@@ -78,16 +99,21 @@ const Card = ({
                 }}
             >
                 {/* ============= DRAG ICONS =============*/}
-                <div
-                    className="absolute right-2 top-2 cursor-move"
-                    {...attributes}
-                    {...listeners}
-                >
-                    <DragIcon
+                <div className="absolute right-2 top-2 flex gap-0.5">
+                    <PinIcon
+                        onClick={() => handlePin(data)}
                         className={`${
                             isSelected ? "flex" : "show-on-hover"
-                        } bg-gray-50/50 hover:bg-gray-200 size-9 rounded-full p-2`}
+                        } size-9 bg-soft-with-hover`}
                     />
+
+                    <div className="cursor-move" {...attributes} {...listeners}>
+                        <DragIcon
+                            className={`${
+                                isSelected ? "flex" : "show-on-hover"
+                            } bg-gray-50/50 hover:bg-gray-200 size-9 rounded-full p-2`}
+                        />
+                    </div>
                 </div>
 
                 {/* ============= IMAGE =============*/}
@@ -152,10 +178,26 @@ const Card = ({
                 </div>
 
                 {/* ============= OPTIONS - SHOW ON HOVER =============*/}
-                <div className="px-2 pb-2 flex gap-2 mt-2 show-on-hover">
-                    <PinIcon
-                        onClick={() => handlePin(data)}
-                        className="size-9 bg-soft-with-hover"
+                <div
+                    className={`${
+                        !(isMoreOption || isBackgroundOptionOpen) &&
+                        "show-on-hover"
+                    } flex px-2 pb-2 gap-2 mt-2 relative`}
+                >
+                    <PencilIcon
+                        className="bg-soft-with-hover size-9"
+                        onClick={() =>
+                            handleSelectModalNote(
+                                data,
+                                setSelectedModalNote,
+                                setIsOpenNote
+                            )
+                        }
+                    />
+                    <CollaborateIcon className="bg-soft-with-hover size-9" />
+                    <ArchivedIcon
+                        onClick={() => handleArchived(data)}
+                        className="bg-soft-with-hover size-9"
                     />
                     <BackgroundOptions
                         isOpen={isBackgroundOptionOpen}
@@ -173,35 +215,40 @@ const Card = ({
                             handleImageUploadRef(imageUploadRef)
                         }
                     />
-                    <ArchivedIcon
-                        onClick={() => handleArchived(data)}
-                        className="bg-soft-with-hover size-9"
+                    <MoreIcon
+                        onClick={() => handleMoreOption()}
+                        className="bg-soft-with-hover size-9 more-icon"
                     />
-                    <LabelIcon
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleLabelToggle(data);
-                        }}
-                        className="bg-soft-with-hover size-9"
-                    />
-                    <PencilIcon
-                        className="bg-soft-with-hover size-9"
-                        onClick={() =>
-                            handleSelectModalNote(
-                                data,
-                                setSelectedModalNote,
-                                setIsOpenNote
-                            )
-                        }
-                    />
-                    <CopyIcon
-                        className="bg-soft-with-hover size-9"
-                        onClick={() => handleCopyNote(data)}
-                    />
-                    <TrashIcon
-                        onClick={() => handleTrash(data)}
-                        className="bg-soft-with-hover size-9"
-                    />
+                    {isMoreOption && (
+                        <div
+                            className="py-1 overflow-hidden w-44 z-50 absolute top-[43px] -right-28 bg-white rounded-lg flex flex-col shadow-[0_1px_2px_0_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)]"
+                            ref={moreOptionRef}
+                        >
+                            <TrashIcon
+                                onClick={() => handleTrash(data)}
+                                className="opacity-70 p-2 size-9"
+                                withText="Delete note"
+                            />
+                            <LabelIcon
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleLabelToggle(data);
+                                }}
+                                className="opacity-70 p-2 size-9"
+                                withText="Add label"
+                            />
+                            <DrawIcon
+                                className="opacity-70 p-2 size-9"
+                                withText="Add Drawing"
+                                onClick={() => handleDrawingToggle()}
+                            />
+                            <CopyIcon
+                                className="opacity-70 p-2 size-9"
+                                onClick={() => handleCopyNote(data)}
+                                withText="Make a Copy"
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -211,6 +258,12 @@ const Card = ({
                 currentId={currentId}
                 setCurrentId={setCurrentId}
                 handleSelectLabels={handleSelectLabels}
+            />
+
+            <DrawingModal
+                setIsOpen={setIsDrawingOpen}
+                isOpen={isDrawingOpen}
+                data={[]}
             />
         </div>
     );
