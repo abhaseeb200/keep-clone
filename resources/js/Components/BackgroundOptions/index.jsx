@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
     ColorIcon,
     NoColorIcon,
@@ -6,6 +6,7 @@ import {
     TickIconWithBG,
     Tooltip,
 } from "@/Components/Icons";
+import useClickOutside from "@/Hooks/useClickOutside";
 
 const colorOptions = [
     { title: "Coral", code: "#faafa8" },
@@ -39,8 +40,12 @@ function BackgroundOptions({
     handleBackgroundOption,
     data = [],
 }) {
+    const backgroundOptionRef = useRef(null);
+
+    useClickOutside(backgroundOptionRef, () => setIsOpen && setIsOpen(false));
+
     return (
-        <div className="relative">
+        <div className="relative" ref={backgroundOptionRef}>
             <ColorIcon
                 className="bg-soft-with-hover size-9"
                 onClick={() => setIsOpen(!isOpen)}
@@ -51,7 +56,7 @@ function BackgroundOptions({
                     {/* ============ COLORS ============*/}
                     <div className="flex gap-1 flex-row items-center pb-2 border-b justify-between">
                         <div
-                            className="group/tooltip cursor-pointer size-8 flex justify-center items-center relative border-[2.3px] border-[#a142f4] rounded-full"
+                            className={`${!data?.background && 'border-[#a142f4]'} group/tooltip cursor-pointer size-8 flex justify-center items-center relative border-[2.3px] rounded-full`}
                             // FOR COLORS. USED KEY 'CODE'
                             onClick={() =>
                                 handleBackgroundOption({ code: "#fff" }, data)
@@ -71,7 +76,7 @@ function BackgroundOptions({
                                 onClick={() => handleBackgroundOption(i, data)}
                             >
                                 <span
-                                    className="size-8 rounded-full cursor-pointer border-[2.3px] hover:!border-black"
+                                    className={`${i?.code === data?.background && "!border-black"} size-8 rounded-full cursor-pointer border-[2.3px] hover:!border-black`}
                                     style={{
                                         background: i?.code,
                                         borderColor: `${i.code}`,
@@ -89,7 +94,7 @@ function BackgroundOptions({
                             onClick={() =>
                                 handleBackgroundOption({ code: "#fff" }, data)
                             }
-                            className="cursor-pointer group/tooltip size-10 p-1 flex justify-center items-center relative border-[2.3px] border-[#a142f4] rounded-full"
+                            className={`${!data?.background && 'border-[#a142f4]'} cursor-pointer group/tooltip size-10 p-1 flex justify-center items-center relative border-[2.3px] rounded-full`}
                         >
                             <TickIconWithBG className="absolute -top-1.5 -right-2 size-4 bg-[#a142f4] rounded-full fill-white" />
                             <NoImageIcon title="Default" className="size-6" />
@@ -102,7 +107,7 @@ function BackgroundOptions({
                                 onClick={() => handleBackgroundOption(i, data)}
                             >
                                 <span
-                                    className="size-10 rounded-full cursor-pointer border-[2.3px] hover:border-black"
+                                    className={`${i.url === data.background && '!border-black'} size-10 rounded-full cursor-pointer border-[2.3px] hover:border-black`}
                                     style={{
                                         backgroundImage: `url(${i.url})`,
                                     }}
