@@ -47,7 +47,7 @@ function BackgroundOptions({
     return (
         <div className="relative" ref={backgroundOptionRef}>
             <ColorIcon
-                className="bg-soft-with-hover size-9"
+                className="bg-soft-with-hover 2xl:size-9 size-[34px]"
                 onClick={() => setIsOpen(!isOpen)}
             />
 
@@ -56,13 +56,17 @@ function BackgroundOptions({
                     {/* ============ COLORS ============*/}
                     <div className="flex gap-1 flex-row items-center pb-2 border-b justify-between">
                         <div
-                            className={`${!data?.background && 'border-[#a142f4]'} group/tooltip cursor-pointer size-8 flex justify-center items-center relative border-[2.3px] rounded-full`}
+                            className={`${
+                                !data?.background && "border-[#a142f4]"
+                            } group/tooltip cursor-pointer size-8 flex justify-center items-center relative border-[2.3px] rounded-full`}
                             // FOR COLORS. USED KEY 'CODE'
                             onClick={() =>
                                 handleBackgroundOption({ code: "#fff" }, data)
                             }
                         >
-                            <TickIconWithBG className="absolute -top-1.5 -right-2 size-4 bg-[#a142f4] rounded-full fill-white" />
+                            {!data?.background && (
+                                <TickIconWithBG className="absolute -top-1.5 -right-2 size-4 bg-[#a142f4] rounded-full fill-white" />
+                            )}
                             <NoColorIcon
                                 className="size-[17px]"
                                 title="Default"
@@ -75,8 +79,14 @@ function BackgroundOptions({
                                 key={index}
                                 onClick={() => handleBackgroundOption(i, data)}
                             >
+                                {i?.code === data?.background && (
+                                    <TickIconWithBG className="absolute -top-1.5 -right-0.5 size-4 bg-[#a142f4] rounded-full fill-white" />
+                                )}
                                 <span
-                                    className={`${i?.code === data?.background && "!border-black"} size-8 rounded-full cursor-pointer border-[2.3px] hover:!border-black`}
+                                    className={`${
+                                        i?.code === data?.background &&
+                                        "!border-[#a142f4]"
+                                    } size-8 rounded-full cursor-pointer border-[2.3px] hover:!border-black`}
                                     style={{
                                         background: i?.code,
                                         borderColor: `${i.code}`,
@@ -94,9 +104,13 @@ function BackgroundOptions({
                             onClick={() =>
                                 handleBackgroundOption({ code: "#fff" }, data)
                             }
-                            className={`${!data?.background && 'border-[#a142f4]'} cursor-pointer group/tooltip size-10 p-1 flex justify-center items-center relative border-[2.3px] rounded-full`}
+                            className={`${
+                                !data?.background && "border-[#a142f4]"
+                            } cursor-pointer group/tooltip size-10 p-1 flex justify-center items-center relative border-[2.3px] rounded-full`}
                         >
-                            <TickIconWithBG className="absolute -top-1.5 -right-2 size-4 bg-[#a142f4] rounded-full fill-white" />
+                            {!data?.background && (
+                                <TickIconWithBG className="absolute -top-1.5 -right-2 size-4 bg-[#a142f4] rounded-full fill-white" />
+                            )}
                             <NoImageIcon title="Default" className="size-6" />
                         </div>
 
@@ -107,11 +121,18 @@ function BackgroundOptions({
                                 onClick={() => handleBackgroundOption(i, data)}
                             >
                                 <span
-                                    className={`${i.url === data.background && '!border-black'} size-10 rounded-full cursor-pointer border-[2.3px] hover:border-black`}
+                                    className={`${
+                                        i.url === data.background &&
+                                        "!border-black"
+                                    } size-10 rounded-full cursor-pointer border-[2.3px] hover:border-black`}
                                     style={{
                                         backgroundImage: `url(${i.url})`,
                                     }}
                                 ></span>
+                                {i?.url === data?.background && (
+                                    <TickIconWithBG className="absolute -top-1.5 -right-0.5 size-4 bg-[#a142f4] rounded-full fill-white" />
+                                )}
+
                                 <Tooltip title={i?.title} />
                             </div>
                         ))}
