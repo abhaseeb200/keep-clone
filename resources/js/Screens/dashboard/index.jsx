@@ -86,7 +86,7 @@ function Dashboard() {
                 <SortableContext items={sortingItems}>
                     <div className="flex flex-wrap">
                         <Masonry
-                            columnsCount={isListView ? 1 : 4}
+                            columnsCount={isListView ? 1 : 5}
                             gutter="18px"
                         >
                             {sortingItems.map((id) => {
