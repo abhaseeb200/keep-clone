@@ -204,10 +204,14 @@ export const ArchivedIcon = ({ className, onClick }) => {
 
 export const LabelIcon = ({ className, onClick, withText }) => {
     return (
-        <div className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer">
+        <div
+            onClick={onClick}
+            className={`${
+                withText && "py-0.5 hover:bg-gray-200 px-2"
+            } group/tooltip relative flex items-center gap-0.5 transition-all ease-in-out cursor-pointer`}
+        >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                onClick={onClick}
                 className={className}
                 width="24"
                 height="24"
@@ -308,10 +312,12 @@ export const CrossIcon = ({ className, onClick }) => {
 
 export const TrashIcon = ({ onClick, className, withText }) => {
     return (
-        <div className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer">
+        <div
+            onClick={onClick}
+            className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer"
+        >
             <svg
                 className={className}
-                onClick={onClick}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -532,9 +538,12 @@ export const GridIcon = ({ className, onClick }) => {
     );
 };
 
-export const CopyIcon = ({ className, onClick, withText }) => {
+export const CopyIcon = ({ onClick,className, withText }) => {
     return (
-        <div className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer">
+        <div
+            onClick={onClick}
+            className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer"
+        >
             <svg
                 className={className}
                 onClick={onClick}
