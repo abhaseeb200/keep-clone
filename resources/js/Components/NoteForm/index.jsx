@@ -49,9 +49,15 @@ function NoteForm() {
     const onSubmit = async (data) => {
         let labelsId = labels.map((i) => i?.id);
         let modifiedData = { ...data, labels: labelsId };
-        // return console.log(modifiedData);
+        let isFormData = true;
 
-        await createNote(modifiedData, reset, handleClearImage, setBackground);
+        await createNote(
+            modifiedData,
+            reset,
+            handleClearImage,
+            setBackground,
+            isFormData
+        );
     };
 
     const handleLabelToggle = () => {

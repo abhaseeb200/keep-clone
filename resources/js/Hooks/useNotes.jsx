@@ -25,11 +25,19 @@ const useNotes = () => {
         }
     };
 
-    const createNote = async (body, reset, handleClearImage, setBackground) => {
+    const createNote = async (
+        body,
+        reset,
+        handleClearImage,
+        setBackground,
+        isFormData
+    ) => {
         try {
             const response = await API.post("/note", body, {
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": `${
+                        isFormData ? "multipart/form-data" : "application/json"
+                    }`,
                 },
             });
             dispatch(createNoteReducer(response.data.data));
