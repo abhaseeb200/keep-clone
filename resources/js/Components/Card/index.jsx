@@ -182,10 +182,10 @@ const Card = ({
                     className={`${
                         !(isMoreOption || isBackgroundOptionOpen) &&
                         "show-on-hover"
-                    } flex px-2 pb-2 gap-2 mt-2 relative`}
+                    } flex px-2 pb-2 justify-between mt-2 relative`}
                 >
                     <PencilIcon
-                        className="bg-soft-with-hover size-9"
+                        className="bg-soft-with-hover 2xl:size-9 size-[34px] "
                         onClick={() =>
                             handleSelectModalNote(
                                 data,
@@ -194,10 +194,10 @@ const Card = ({
                             )
                         }
                     />
-                    <CollaborateIcon className="bg-soft-with-hover size-9" />
+                    <CollaborateIcon className="bg-soft-with-hover 2xl:size-9 size-[34px] " />
                     <ArchivedIcon
                         onClick={() => handleArchived(data)}
-                        className="bg-soft-with-hover size-9"
+                        className="bg-soft-with-hover 2xl:size-9 size-[34px] "
                     />
                     <BackgroundOptions
                         isOpen={isBackgroundOptionOpen}
@@ -206,7 +206,7 @@ const Card = ({
                         handleBackgroundOption={handleUpdateBackgroundOption}
                     />
                     <ImageUploadIcon
-                        className="bg-soft-with-hover size-9"
+                        className="bg-soft-with-hover 2xl:size-9 size-[34px] "
                         handleFileChange={(event) =>
                             handleFileChangeUpdate(event, data)
                         }
@@ -217,7 +217,7 @@ const Card = ({
                     />
                     <MoreIcon
                         onClick={() => handleMoreOption()}
-                        className="bg-soft-with-hover size-9 more-icon"
+                        className="bg-soft-with-hover 2xl:size-9  size-8 more-icon"
                     />
                     {isMoreOption && (
                         <div
