@@ -202,9 +202,9 @@ export const ArchivedIcon = ({ className, onClick }) => {
     );
 };
 
-export const LabelIcon = ({ className, onClick }) => {
+export const LabelIcon = ({ className, onClick, withText }) => {
     return (
-        <div className="group/tooltip relative">
+        <div className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 onClick={onClick}
@@ -215,7 +215,8 @@ export const LabelIcon = ({ className, onClick }) => {
             >
                 <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16zM16 17H5V7h11l3.55 5L16 17z"></path>
             </svg>
-            <Tooltip title="Label" />
+            {withText && <span className="text-sm">{withText}</span>}
+            {!withText && <Tooltip title="Label" />}
         </div>
     );
 };
@@ -305,9 +306,9 @@ export const CrossIcon = ({ className, onClick }) => {
     );
 };
 
-export const TrashIcon = ({ onClick, className }) => {
+export const TrashIcon = ({ onClick, className, withText }) => {
     return (
-        <div className="group/tooltip relative">
+        <div className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer">
             <svg
                 className={className}
                 onClick={onClick}
@@ -319,7 +320,8 @@ export const TrashIcon = ({ onClick, className }) => {
                 <path d="M15 4V3H9v1H4v2h1v13c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6h1V4h-5zm2 15H7V6h10v13z"></path>
                 <path d="M9 8h2v9H9zm4 0h2v9h-2z"></path>
             </svg>
-            <Tooltip title="Delete" />
+            {withText && <span className="text-sm">{withText}</span>}
+            {!withText && <Tooltip title="Delete" />}
         </div>
     );
 };
@@ -355,7 +357,7 @@ export const BulbIcon = ({ className }) => {
     );
 };
 
-export const PencilIcon = ({ className, onClick = () => {} }) => {
+export const PencilIcon = ({ className, onClick = () => {}, withText }) => {
     return (
         <div className="group/tooltip relative">
             <svg
@@ -368,7 +370,8 @@ export const PencilIcon = ({ className, onClick = () => {} }) => {
             >
                 <path d="M20.41 4.94l-1.35-1.35c-.78-.78-2.05-.78-2.83 0L13.4 6.41 3 16.82V21h4.18l10.46-10.46 2.77-2.77c.79-.78.79-2.05 0-2.83zm-14 14.12L5 19v-1.36l9.82-9.82 1.41 1.41-9.82 9.83z" />
             </svg>
-            <Tooltip title="Edit note" />
+            {withText && <span className="text-sm">{withText}</span>}
+            {!withText && <Tooltip title="Edit note" />}
         </div>
     );
 };
@@ -529,9 +532,9 @@ export const GridIcon = ({ className, onClick }) => {
     );
 };
 
-export const CopyIcon = ({ className, onClick }) => {
+export const CopyIcon = ({ className, onClick, withText }) => {
     return (
-        <div className="group/tooltip relative">
+        <div className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer">
             <svg
                 className={className}
                 onClick={onClick}
@@ -547,8 +550,78 @@ export const CopyIcon = ({ className, onClick }) => {
                     strokeLinejoin="round"
                 />
             </svg>
+            {withText && <span className="text-sm">{withText}</span>}
+            {!withText && <Tooltip title="Grid View" />}
+        </div>
+    );
+};
 
-            <Tooltip title="Grid View" />
+export const CollaborateIcon = ({ className, onClick }) => {
+    return (
+        <div className="group/tooltip relative flex items-center gap-0.5">
+            <svg
+                className={className}
+                onClick={onClick}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="#000"
+            >
+                <path d="M9 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 7c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6 5H3v-.99C3.2 16.29 6.3 15 9 15s5.8 1.29 6 2v1zm3-4v-3h-3V9h3V6h2v3h3v2h-3v3h-2z" />
+            </svg>
+
+            <Tooltip title="Collaborator" />
+        </div>
+    );
+};
+
+export const DrawIcon = ({ className, onClick, withText }) => {
+    return (
+        <div
+            onClick={onClick}
+            className="group/tooltip relative p-0.5 px-2 flex items-center gap-0.5 hover:bg-gray-200 transition-all ease-in-out cursor-pointer"
+        >
+            <svg
+                className={className}
+                width="800px"
+                height="800px"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    d="M5 17V7M5 17C3.89543 17 3 17.8954 3 19C3 20.1046 3.89543 21 5 21C6.10457 21 7 20.1046 7 19M5 17C6.10457 17 7 17.8954 7 19M5 7C6.10457 7 7 6.10457 7 5M5 7C3.89543 7 3 6.10457 3 5C3 3.89543 3.89543 3 5 3C6.10457 3 7 3.89543 7 5M7 5H17M17 5C17 6.10457 17.8954 7 19 7C20.1046 7 21 6.10457 21 5C21 3.89543 20.1046 3 19 3C17.8954 3 17 3.89543 17 5ZM7 19H17M17 19C17 20.1046 17.8954 21 19 21C20.1046 21 21 20.1046 21 19C21 17.8954 20.1046 17 19 17C17.8954 17 17 17.8954 17 19ZM17.9247 6.6737L15.1955 10.3776M15.1955 13.6223L17.9222 17.3223M16 12C16 13.1046 15.1046 14 14 14C12.8954 14 12 13.1046 12 12C12 10.8954 12.8954 10 14 10C15.1046 10 16 10.8954 16 12Z"
+                    stroke="#000000"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+
+            {withText && <span className="text-sm">{withText}</span>}
+            {!withText && <Tooltip title="Collaborator" />}
+        </div>
+    );
+};
+
+export const MoreIcon = ({ className, onClick }) => {
+    return (
+        <div className="group/tooltip relative">
+            <svg
+                className={className}
+                onClick={onClick}
+                xmlns="http://www.w3.org/2000/svg"
+                xmlSpace="preserve"
+                version="1.1"
+                y="0px"
+                x="0px"
+                viewBox="0 0 18 18"
+                enableBackground="new 0 0 18 18"
+                fill="#000"
+            >
+                <path d="m9 5.5c1 0 1.8-0.8 1.8-1.8s-0.8-1.7-1.8-1.7-1.8 0.8-1.8 1.8 0.8 1.7 1.8 1.7zm0 1.7c-1 0-1.8 0.8-1.8 1.8s0.8 1.8 1.8 1.8 1.8-0.8 1.8-1.8-0.8-1.8-1.8-1.8zm0 5.3c-1 0-1.8 0.8-1.8 1.8s0.8 1.7 1.8 1.7 1.8-0.8 1.8-1.8-0.8-1.7-1.8-1.7z" />
+            </svg>
+
+            <Tooltip title="More" />
         </div>
     );
 };
