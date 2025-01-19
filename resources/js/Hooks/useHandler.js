@@ -117,11 +117,10 @@ const useHandler = () => {
             background = option?.code;
         }
 
-        //Remove labels from it
-        const { labels, ...remainNote } = note;
+        // const { labels, ...remainNote } = note;
 
         await updateNote({
-            ...remainNote,
+            ...note,
             background: background,
         });
     };

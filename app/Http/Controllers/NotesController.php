@@ -108,7 +108,6 @@ class NotesController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'isPinned' => 'nullable|boolean',
             'isArchived' => 'nullable|boolean',
             'background' => 'nullable|string',
@@ -118,18 +117,10 @@ class NotesController extends Controller
 
         $note = Auth::user()->notes()->findOrFail($id);
 
-        if ($request->hasFile('image')) {
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('images'), $imageName);
-            $imagePath = 'images/'.$imageName;
-            $note->update(["image" => $imagePath]);
-        }
-
         // $note = Auth::user()->notes()->findOrFail($id)->update($request->all()); 
         $note->update([
             'title' => $request->input('title'), 
             'content' => $request->input('content'),
-            'image' => $imagePath ?? "",
             'isPinned' => $request->input('isPinned'),
             'isArchived' => $request->input('isArchived'),
             'background' => $request->input('background') ?? ""
