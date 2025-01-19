@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Masonry from "react-responsive-masonry";
+import Masonry from "react-layout-masonry";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { getNotesReducer } from "@/Features/note/noteSlice";
@@ -84,32 +84,26 @@ function Dashboard() {
                 onDragEnd={handleDragEnd}
             >
                 <SortableContext items={sortingItems}>
-                    <div className="flex flex-wrap">
-                        <Masonry
-                            columnsCount={isListView ? 1 : 5}
-                            gutter="18px"
-                        >
-                            {sortingItems.map((id) => {
-                                const note = notes.find(
-                                    (note) => note.id === id
-                                );
-                                return (
-                                    <Card
-                                        key={note?.id}
-                                        data={note}
-                                        currentId={currentId}
-                                        setCurrentId={setCurrentId}
-                                        selectMultiple={selectMultiple}
-                                        handleLabelToggle={handleLabelToggle}
-                                        setSelectedModalNote={
-                                            setSelectedModalNote
-                                        }
-                                        setIsOpenNote={setIsOpenNote}
-                                    />
-                                );
-                            })}
-                        </Masonry>
-                    </div>
+                    <Masonry
+                        columns={{ 640: 1, 768: 2, 1024: 4, 1366: 5 }}
+                        gap={16}
+                    >
+                        {sortingItems.map((id) => {
+                            const note = notes.find((note) => note.id === id);
+                            return (
+                                <Card
+                                    key={note?.id}
+                                    data={note}
+                                    currentId={currentId}
+                                    setCurrentId={setCurrentId}
+                                    selectMultiple={selectMultiple}
+                                    handleLabelToggle={handleLabelToggle}
+                                    setSelectedModalNote={setSelectedModalNote}
+                                    setIsOpenNote={setIsOpenNote}
+                                />
+                            );
+                        })}
+                    </Masonry>
                 </SortableContext>
             </DndContext>
 
