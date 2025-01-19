@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import {
     ArchivedIcon,
+    CrossIcon,
     ImageUploadIcon,
     LabelIcon,
     PinIcon,
@@ -46,6 +47,8 @@ function NoteForm() {
         handleClearImage,
     } = useImageUpload();
 
+    // REFACTOR CODE REQUIRED
+    // USED THE USE-HOOK-FORM INSTEAD OF STATES
     const onSubmit = async (data) => {
         let isFormData = true;
         let labelsId = labels.map((i) => i?.id);
@@ -61,7 +64,8 @@ function NoteForm() {
             reset,
             handleClearImage,
             setBackground,
-            isFormData
+            isFormData,
+            setLabels
         );
     };
 
@@ -74,7 +78,7 @@ function NoteForm() {
         if (labels.some((i) => i?.id === data?.id)) {
             updatedLabels = labels.filter((i) => i?.id !== data?.id);
         } else {
-            updatedLabels = [...labels, { id: data?.id }];
+            updatedLabels = [...labels, data];
         }
         setLabels(updatedLabels);
     };
@@ -148,6 +152,28 @@ function NoteForm() {
                     }
                 />
             </div>
+
+            {/* ============= LABELS =============*/}
+            {isMoreField && labels.length ? (
+                <div className="px-4 mt-7 flex gap-2 flex-wrap">
+                    {labels?.map((label, index) => (
+                        <div
+                            key={index}
+                            className="relative group/edit flex items-center gap-0.5 bg-gray-200 h-6 px-3 rounded-xl text-xs opacity-75"
+                        >
+                            <span className="group-hover/edit:-translate-x-1.5">
+                                {label?.name}
+                            </span>
+                            <CrossIcon
+                                onClick={() => handleSelectLabels(label)}
+                                className="absolute right-0 group-hover/edit:block hidden size-4 mt-0.5 cursor-pointer hover:bg-slate-400 rounded-full p-0.5"
+                            />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                ""
+            )}
 
             {/* ============== OPTIONS ============== */}
             <div
