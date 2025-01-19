@@ -25,12 +25,16 @@ const useNotes = () => {
         }
     };
 
+    // PLEASE REFACTOR THIS CODE
+    // USED THE USE-HOOK-FORM FOR RESET ALL FIELDSq
+    // CONVERT THE STATES INTO USE-HOOK-FORM
     const createNote = async (
         body,
         reset,
         handleClearImage,
         setBackground,
-        isFormData
+        isFormData,
+        setLabels
     ) => {
         try {
             const response = await API.post("/note", body, {
@@ -44,6 +48,7 @@ const useNotes = () => {
             toast.success(response.data.message);
             setBackground && setBackground("");
             handleClearImage && handleClearImage();
+            setLabels && setLabels([]);
             reset && reset();
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
