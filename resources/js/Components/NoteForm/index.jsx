@@ -47,9 +47,14 @@ function NoteForm() {
     } = useImageUpload();
 
     const onSubmit = async (data) => {
-        let labelsId = labels.map((i) => i?.id);
-        let modifiedData = { ...data, labels: labelsId };
         let isFormData = true;
+        let labelsId = labels.map((i) => i?.id);
+
+        let modifiedData = {
+            ...data,
+            labels: labelsId,
+            background: background,
+        };
 
         await createNote(
             modifiedData,
@@ -76,8 +81,12 @@ function NoteForm() {
 
     return (
         <form
-            className="relative mb-8 rounded-lg shadow-lg max-w-2xl mx-auto"
-            style={{ background: background || "#fff" }}
+            className="relative mb-8 rounded-lg shadow-lg max-w-2xl mx-auto bg-white"
+            style={{
+                background: background?.includes("svg")
+                    ? `url(${background})`
+                    : background,
+            }}
             ref={containerRef}
             onSubmit={handleSubmit(onSubmit)}
         >
@@ -150,9 +159,10 @@ function NoteForm() {
                     <BackgroundOptions
                         isOpen={isBackgroundOptionOpen}
                         setIsOpen={setIsBackgroundOptionOpen}
-                        handleBackgroundOption={(data) =>
-                            handleBackgroundOption(data, setBackground)
-                        }
+                        handleBackgroundOption={(data) => {
+                            handleBackgroundOption(data, setBackground);
+                        }}
+                        data={{ background }}
                     />
                     <ImageUploadIcon
                         className="bg-soft-with-hover size-9"
