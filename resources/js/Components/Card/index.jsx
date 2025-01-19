@@ -93,7 +93,7 @@ const Card = ({
                     isSelected ? "border-gray-900" : "border-gray-200"
                 } group border bg-white rounded-lg relative hover:shadow-lg`}
                 style={{
-                    background: data?.background?.includes("background")
+                    background: data?.background?.includes("svg")
                         ? `url(${data?.background})`
                         : data?.background,
                 }}
