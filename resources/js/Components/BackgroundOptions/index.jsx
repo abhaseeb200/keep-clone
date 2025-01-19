@@ -45,9 +45,6 @@ function BackgroundOptions({
     useClickOutside(backgroundOptionRef, () => setIsOpen && setIsOpen(false));
 
 
-    console.log(data?.background, data.title);
-    
-
     return (
         <div className="relative" ref={backgroundOptionRef}>
             <ColorIcon
