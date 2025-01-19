@@ -101,14 +101,16 @@ const useHandler = () => {
         updateNoteLabels({ ...note, labels: newLabelsId });
     };
 
+    // FOR CREATE NEW NOTE
     const handleBackgroundOption = (data, setBackground) => {
         if (Object.keys(data).includes("url")) {
-            return setBackground(`url(${data?.url})`);
+            return setBackground(data?.url);
         }
 
         setBackground(data?.code);
     };
 
+    // FOR UPDATE THE NOTE
     const handleUpdateBackgroundOption = async (option, note) => {
         let background;
         if (Object.keys(option).includes("url")) {
@@ -116,8 +118,6 @@ const useHandler = () => {
         } else {
             background = option?.code;
         }
-
-        // const { labels, ...remainNote } = note;
 
         await updateNote({
             ...note,
