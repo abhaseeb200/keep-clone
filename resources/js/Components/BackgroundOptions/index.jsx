@@ -44,6 +44,10 @@ function BackgroundOptions({
 
     useClickOutside(backgroundOptionRef, () => setIsOpen && setIsOpen(false));
 
+
+    console.log(data?.background, data.title);
+    
+
     return (
         <div className="relative" ref={backgroundOptionRef}>
             <ColorIcon
@@ -58,10 +62,10 @@ function BackgroundOptions({
                         <div
                             className={`${
                                 !data?.background && "border-[#a142f4]"
-                            } group/tooltip cursor-pointer size-8 flex justify-center items-center relative border-[2.3px] rounded-full`}
+                            } group/tooltip cursor-pointer size-8 flex justify-center items-center relative border-[2.3px] hover:border-black rounded-full`}
                             // FOR COLORS. USED KEY 'CODE'
                             onClick={() =>
-                                handleBackgroundOption({ code: "#fff" }, data)
+                                handleBackgroundOption({ code: "" }, data)
                             }
                         >
                             {!data?.background && (
@@ -100,13 +104,13 @@ function BackgroundOptions({
                     {/* ============ IMAGES ============*/}
                     <div className="flex gap-1 flex-row items-center pt-2 border-t">
                         <div
-                            // FOR COLORS. USED KEY 'CODE'
+                            // FOR COLORS. USED KEY 'URL'
                             onClick={() =>
-                                handleBackgroundOption({ code: "#fff" }, data)
+                                handleBackgroundOption({ url: "" }, data)
                             }
                             className={`${
                                 !data?.background && "border-[#a142f4]"
-                            } cursor-pointer group/tooltip size-10 p-1 flex justify-center items-center relative border-[2.3px] rounded-full`}
+                            } hover:border-black cursor-pointer group/tooltip size-10 p-1 flex justify-center items-center relative border-[2.3px] rounded-full`}
                         >
                             {!data?.background && (
                                 <TickIconWithBG className="absolute -top-1.5 -right-2 size-4 bg-[#a142f4] rounded-full fill-white" />
@@ -123,7 +127,7 @@ function BackgroundOptions({
                                 <span
                                     className={`${
                                         i.url === data.background &&
-                                        "!border-black"
+                                        "!border-[#a142f4]"
                                     } size-10 rounded-full cursor-pointer border-[2.3px] hover:border-black`}
                                     style={{
                                         backgroundImage: `url(${i.url})`,
