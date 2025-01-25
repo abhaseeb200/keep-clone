@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginReducer, logoutReducer } from "@/Features/auth/authSlice";
 import API from "@/Config/api";
+import toast from "react-hot-toast";
 
 const useAuth = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +19,9 @@ const useAuth = () => {
             dispatch(loginReducer(response?.data));
             navigate("/dashboard");
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error?.response?.data?.message || "Something went wrong"
+            );
         } finally {
             setIsLoading(false);
         }
@@ -31,7 +34,9 @@ const useAuth = () => {
             dispatch(loginReducer(response?.data));
             navigate("/dashboard");
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error?.response?.data?.message || "Something went wrong"
+            );
         } finally {
             setIsLoading(false);
         }
@@ -44,7 +49,9 @@ const useAuth = () => {
             dispatch(logoutReducer());
             navigate("/");
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error?.response?.data?.message || "Something went wrong"
+            );
         } finally {
             setIsLoading(false);
         }
@@ -57,7 +64,9 @@ const useAuth = () => {
             // console.log(response);
             const response = { email: "admin@email.com", password: "123" };
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error?.response?.data?.message || "Something went wrong"
+            );
         } finally {
             setIsLoading(false);
         }
@@ -69,7 +78,9 @@ const useAuth = () => {
             // console.log(response);
             navigate("/");
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error?.response?.data?.message || "Something went wrong"
+            );
         } finally {
             setIsLoading(false);
         }
