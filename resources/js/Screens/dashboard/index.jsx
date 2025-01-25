@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Masonry from "react-layout-masonry";
@@ -12,7 +12,8 @@ import useLabels from "@/Hooks/useLabels";
 import NoteForm from "@/Components/NoteForm";
 
 function Dashboard() {
-    const [sortingItems, setSortingItems] = useState([]); // Used for drag-and-drop
+    const [sortingOther, setSortingOther] = useState([]); // Used for with-out pinned drag-and-drop notes
+    const [sortingPinned, setSortingPinned] = useState([]); // Used for pinned drag-and-drop notes
     const [selectedModalNote, setSelectedModalNote] = useState({});
     const [isOpenNote, setIsOpenNote] = useState(false);
     const [currentId, setCurrentId] = useState(null);
@@ -35,26 +36,33 @@ function Dashboard() {
         }
 
         fetchLabels();
+        fetchNotes();
         if (!notes?.length) {
-            fetchNotes();
         }
     }, []);
 
     useEffect(() => {
         //Used for the purpose of update current-note data in the modal
         setSelectedModalNote(
-            notes.find((note) => note.id == selectedModalNote?.id)
+            notes.find((note) => note?.id == selectedModalNote?.id)
         );
 
-        //Used for the purpose of drag-and-drop items
-        setSortingItems(notes.map((note) => note.id));
+        //Used for the purpose of drag-and-drop others items
+        setSortingOther(
+            notes.filter((note) => !note?.isPinned).map((note) => note?.id)
+        );
+
+        //Used for the purpose of drag-and-drop Pinned items
+        setSortingPinned(
+            notes.filter((note) => note?.isPinned).map((note) => note?.id)
+        );
     }, [notes]);
 
     const handleDragEnd = (event) => {
         const { active, over } = event;
 
         if (active.id !== over.id) {
-            setSortingItems((prev) => {
+            setSortingOther((prev) => {
                 const oldIndex = prev.indexOf(active.id);
                 const newIndex = prev.indexOf(over.id);
                 const newOrder = arrayMove(prev, oldIndex, newIndex);
@@ -63,7 +71,35 @@ function Dashboard() {
                     notes.find((note) => note.id === orderId)
                 );
 
-                dispatch(getNotesReducer(sortedNotes));
+                const remainingNotes = sortingPinned.map((orderId) =>
+                    notes.find((note) => note.id === orderId)
+                );
+
+                dispatch(getNotesReducer([...sortedNotes, ...remainingNotes]));
+                return newOrder;
+            });
+        }
+    };
+
+    //Refactor Required: Same functionality code repeat with different states
+    const handleDragEndPinned = (event) => {
+        const { active, over } = event;
+
+        if (active.id !== over.id) {
+            setSortingPinned((prev) => {
+                const oldIndex = prev.indexOf(active.id);
+                const newIndex = prev.indexOf(over.id);
+                const newOrder = arrayMove(prev, oldIndex, newIndex);
+
+                const sortedNotes = newOrder.map((orderId) =>
+                    notes.find((note) => note.id === orderId)
+                );
+
+                const remainingNotes = sortingOther.map((orderId) =>
+                    notes.find((note) => note.id === orderId)
+                );
+
+                dispatch(getNotesReducer([...sortedNotes, ...remainingNotes]));
                 return newOrder;
             });
         }
@@ -78,17 +114,63 @@ function Dashboard() {
             {/* ============== INPUT FIELDS ============== */}
             <NoteForm />
 
+            {/* ============== PIN NOTES CARD  ============== */}
+            {notes?.some((note) => note?.isPinned) && (
+                <>
+                    <div className="mb-3">Pinned</div>
+
+                    <DndContext
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEndPinned}
+                    >
+                        <SortableContext items={sortingPinned}>
+                            <Masonry
+                                columns={{ 640: 1, 768: 2, 1024: 4, 1366: 5 }}
+                                gap={16}
+                            >
+                                {sortingPinned.map((id) => {
+                                    const note = notes.find(
+                                        (note) => note?.id === id
+                                    );
+
+                                    return (
+                                        <Card
+                                            key={note?.id}
+                                            data={note}
+                                            currentId={currentId}
+                                            setCurrentId={setCurrentId}
+                                            selectMultiple={selectMultiple}
+                                            handleLabelToggle={
+                                                handleLabelToggle
+                                            }
+                                            setSelectedModalNote={
+                                                setSelectedModalNote
+                                            }
+                                            setIsOpenNote={setIsOpenNote}
+                                        />
+                                    );
+                                })}
+                            </Masonry>
+                        </SortableContext>
+                    </DndContext>
+                </>
+            )}
+
             {/* ============== MASONRY NOTES CARDS ============== */}
+            {notes?.some((note) => note?.isPinned) && (
+                <div className="mb-3">Others</div>
+            )}
+
             <DndContext
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
             >
-                <SortableContext items={sortingItems}>
+                <SortableContext items={sortingOther}>
                     <Masonry
                         columns={{ 640: 1, 768: 2, 1024: 4, 1366: 5 }}
                         gap={16}
                     >
-                        {sortingItems.map((id) => {
+                        {sortingOther.map((id) => {
                             const note = notes.find((note) => note.id === id);
                             return (
                                 <Card
