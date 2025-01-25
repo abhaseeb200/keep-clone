@@ -131,6 +131,22 @@ const Card = ({
                         <img src={data?.image} alt="card-image" />
                     </div>
                 )}
+                
+                {/* ============= DRAWING IMAGE =============*/}
+                {data?.drawing && (
+                    <div
+                        className="rounded-t-lg overflow-hidden cursor-pointer"
+                        onClick={() =>
+                            handleSelectModalNote(
+                                data,
+                                setSelectedModalNote,
+                                setIsOpenNote
+                            )
+                        }
+                    >
+                        <img src={data?.drawing} alt="drawing-image" />
+                    </div>
+                )}
 
                 {/* ============= SELECTED ICON =============*/}
                 <div className="absolute -top-2 -left-2 cursor-pointer">
@@ -239,7 +255,7 @@ const Card = ({
                             />
                             <DrawIcon
                                 className="opacity-70 p-2 size-9"
-                                withText="Add Drawing"
+                                withText="Edit Drawing"
                                 onClick={() => handleDrawingToggle()}
                             />
                             <CopyIcon
@@ -263,7 +279,8 @@ const Card = ({
             <DrawingModal
                 setIsOpen={setIsDrawingOpen}
                 isOpen={isDrawingOpen}
-                data={[]}
+                isUpdate={true}
+                data={data}
             />
         </div>
     );

@@ -538,7 +538,7 @@ export const GridIcon = ({ className, onClick }) => {
     );
 };
 
-export const CopyIcon = ({ onClick,className, withText }) => {
+export const CopyIcon = ({ onClick, className, withText }) => {
     return (
         <div
             onClick={onClick}
@@ -607,7 +607,7 @@ export const DrawIcon = ({ className, onClick, withText }) => {
             </svg>
 
             {withText && <span className="text-sm">{withText}</span>}
-            {!withText && <Tooltip title="Collaborator" />}
+            {!withText && <Tooltip title="Drawing Tool" />}
         </div>
     );
 };
@@ -632,5 +632,99 @@ export const MoreIcon = ({ className, onClick }) => {
 
             <Tooltip title="More" />
         </div>
+    );
+};
+
+export const BackIcon = ({ className, onClick }) => {
+    return (
+        <div className="group/tooltip relative">
+            <svg
+                className={className}
+                onClick={onClick}
+                height="24px"
+                version="1.1"
+                viewBox="0 0 24 24"
+                width="24px"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+            >
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+            </svg>
+
+            <Tooltip title="Back" />
+        </div>
+    );
+};
+
+export const EraseIcon = ({ className, onClick }) => {
+    return (
+        <svg
+            className={className}
+            onClick={onClick}
+            version="1.1"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+        >
+            <path
+                fill="#424242"
+                d="M21.41,11.33 L13.04,20 L4.73,20 L2.58,17.86 C1.8,17.08 1.8,15.83 2.58,15.04 L13.62,3.58 C14.4,2.81 15.68,2.81 16.46,3.58 L21.41,8.51 C22.2,9.29 22.2,10.55 21.41,11.33 L21.41,11.33 Z"
+            />
+            <polygon
+                color="#4285f4"
+                className="ink-icon-color"
+                points="17.26 18 15.26 20 21.96 20 21.96 18"
+            />
+        </svg>
+    );
+};
+
+export const InkPenIcon = ({ className, onClick }) => {
+    return (
+        <svg
+            className={className}
+            onClick={onClick}
+            fill="none"
+            fillRule="evenodd"
+            height="24px"
+            stroke="none"
+            strokeWidth={1}
+            version="1.1"
+            viewBox="0 0 24 24"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+        >
+            <polygon
+                fill="#424242"
+                points="3 17.25 3 21 6.74 21 14.28 13.47 10.53 9.72"
+            />
+            <path
+                color="#000000"
+                className="ink-icon-color"
+                d="M18.37,3.3 L20.71,5.63 C21.1,6.02 21.11,6.66 20.72,7.05 L15.35,12.41 L11.59,8.65 L14.12,6.12 L13.39,5.39 L7.73,11.05 L6.33,9.65 L12.7,3.29 C13.09,2.9 13.74,2.91 14.12,3.3 L15.54,4.71 L16.96,3.3 C17.34,2.91 17.98,2.91 18.37,3.3 L18.37,3.3 Z"
+            />
+            <path
+                fill="#424242"
+                className="ink-cap-border"
+                d="M17.7,4L20,6.3L15.4,11L13,8.6l1.8-1.8l0.7-0.7l-0.7-0.7l-0.2-0.2l0.2,0.2l0.7,0.7l0.7-0.7L17.7,4 M13.4,3 c-0.3,0-0.5,0.1-0.7,0.3L6.3,9.6l1.4,1.4l5.7-5.7l0.7,0.7l-2.5,2.5l3.8,3.8L20.7,7c0.4-0.4,0.4-1,0-1.4l-2.3-2.3 C18.2,3.1,17.9,3,17.7,3S17.2,3.1,17,3.3l-1.4,1.4l-1.4-1.4C13.9,3.1,13.7,3,13.4,3L13.4,3z"
+            />
+        </svg>
+    );
+};
+
+export const ChevIcon = ({ className, onClick }) => {
+    return (
+        <svg
+            className={className}
+            onClick={onClick}
+            fill="#000000"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path d="M7 10l5 5 5-5z" />
+            <path d="M0 0h24v24H0z" fill="none" />
+        </svg>
     );
 };

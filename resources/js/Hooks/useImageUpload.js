@@ -35,7 +35,7 @@ const useImageUpload = () => {
         }
     };
 
-    //Used this function for update image in card-note 
+    //Used this function for update image in card-note
     const handleFileChangeUpdate = async (event, data) => {
         const file = event.target.files[0];
         if (file) {

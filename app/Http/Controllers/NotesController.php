@@ -61,6 +61,7 @@ class NotesController extends Controller
             'isPinned' => 'nullable|boolean',
             'isArchived' => 'nullable|boolean',
             'background' => 'nullable|string',
+            'drawing' => 'nullable|string',
             'labels' => 'array',
             'labels.*' => 'exists:labels,id' //Used to ensure that each label ID provided in the labels
         ]);
@@ -82,13 +83,18 @@ class NotesController extends Controller
             'image' => $imagePath,
             'isPinned' => $request->input('isPinned'),
             'isArchived' => $request->input('isArchived'),
-            'background' => $request->input('background')
+            'background' => $request->input('background'),
+            'drawing' => $request->input('drawing')
         ]);
+
+
 
          // Attach labels if provided
          if (isset($validatedData['labels'])) {
             $note->labels()->attach($validatedData['labels']);
         }
+
+        // return response()->json(['message' => 'testing', 'data' => $request->input('drawing')]);
 
         // $note = Auth::user()->notes()->create($request->all());
         // return response()->json(['message' => 'Added successfully', 'data' => $note]);
@@ -111,6 +117,7 @@ class NotesController extends Controller
             'isPinned' => 'nullable|boolean',
             'isArchived' => 'nullable|boolean',
             'background' => 'nullable|string',
+            'drawing' => 'nullable|string',
             'labels' => 'array',
             'labels.*' => 'exists:labels,id'
         ]);
@@ -123,7 +130,8 @@ class NotesController extends Controller
             'content' => $request->input('content'),
             'isPinned' => $request->input('isPinned'),
             'isArchived' => $request->input('isArchived'),
-            'background' => $request->input('background') ?? ""
+            'background' => $request->input('background') ?? "",
+            'drawing' => $request->input('drawing')
         ]);
 
         // Sync labels if provided
@@ -159,6 +167,6 @@ class NotesController extends Controller
     {
         $note = Auth::user()->notes()->findOrFail($id);
         $note->delete();
-        return response()->json(['message' => 'Post deleted successfully']);
+        return response()->json(['message' => 'Note deleted successfully']);
     }
 }

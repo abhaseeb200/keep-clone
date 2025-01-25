@@ -22,6 +22,7 @@ class Note extends Model
         'isPinned',
         'isArchived',
         'background',
+        'drawing',
     ];
 
     public function user()

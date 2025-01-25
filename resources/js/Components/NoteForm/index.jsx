@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     ArchivedIcon,
     CrossIcon,
+    DrawIcon,
     ImageUploadIcon,
     LabelIcon,
     PinIcon,
@@ -14,12 +15,15 @@ import useClickOutside from "@/Hooks/useClickOutside";
 import useHandler from "@/Hooks/useHandler";
 import useNotes from "@/Hooks/useNotes";
 import LabelSelect from "@/Components/LabelSelect";
+import DrawingModal from "@/Components/DrawingModal";
 
 function NoteForm() {
     const [background, setBackground] = useState("");
     const [isMoreField, setIsMoreField] = useState(false);
     const [isLabelSelectOpen, setIsLabelSelectOpen] = useState(false);
     const [isBackgroundOptionOpen, setIsBackgroundOptionOpen] = useState(false);
+    const [isDrawingOpen, setIsDrawingOpen] = useState(false);
+    const [binaryImage, setBinaryImage] = useState("");
     const [labels, setLabels] = useState([]);
 
     const containerRef = useRef(null);
@@ -57,6 +61,7 @@ function NoteForm() {
             ...data,
             labels: labelsId,
             background: background,
+            drawing: binaryImage,
         };
 
         await createNote(
@@ -81,6 +86,10 @@ function NoteForm() {
             updatedLabels = [...labels, data];
         }
         setLabels(updatedLabels);
+    };
+
+    const handleDrawingToggle = () => {
+        setIsDrawingOpen(!isDrawingOpen);
     };
 
     return (
@@ -110,6 +119,24 @@ function NoteForm() {
                     </div>
                 </div>
             )}
+           
+            {/* ============== DRAWING IMAGE - IF UPLOADED ============== */}
+            {binaryImage && (
+                <div className="flex justify-center relative">
+                    <img
+                        src={binaryImage}
+                        alt="Drawing Preview"
+                        className="max-w-full w-[672px]"
+                    />
+                    <div
+                        className="absolute top-4 right-4"
+                        onClick={() => setBinaryImage("")}
+                    >
+                        <TrashIcon className="cursor-pointer opacity-70 rounded-full p-2 size-9 shadow-xl bg-gray-900 fill-gray-100 hover:bg-white hover:!fill-black" />
+                    </div>
+                </div>
+            )}
+
             {/* ============== TITLE ============== */}
             <div
                 className={`${
@@ -205,6 +232,10 @@ function NoteForm() {
                         className="bg-soft-with-hover size-9"
                         onClick={() => handleLabelToggle()}
                     />
+                    <DrawIcon
+                        className="bg-soft-with-hover size-9"
+                        onClick={() => handleDrawingToggle()}
+                    />
                 </div>
 
                 <div className="flex gap-2 items-center">
@@ -230,6 +261,12 @@ function NoteForm() {
                 isOpen={isLabelSelectOpen}
                 handleSelectLabels={handleSelectLabels}
                 setCurrentId={setIsLabelSelectOpen} // Used for the close Label Select
+            />
+
+            <DrawingModal
+                isOpen={isDrawingOpen}
+                setIsOpen={setIsDrawingOpen}
+                setBinaryImage={setBinaryImage}
             />
         </form>
     );

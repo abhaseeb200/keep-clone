@@ -92,6 +92,16 @@ const CardModal = ({ isOpen, setIsOpenNote, data }) => {
                                     />
                                 </div>
                             )}
+                            
+                            {/* ======== DRAWING ======== */}
+                            {data?.drawing && (
+                                <div className="overflow-hidden rounded-t-lg">
+                                    <img
+                                        src={data?.drawing}
+                                        className="size-full"
+                                    />
+                                </div>
+                            )}
 
                             {/* ======== TITLE ======== */}
                             <div className="px-4 pb-2">
