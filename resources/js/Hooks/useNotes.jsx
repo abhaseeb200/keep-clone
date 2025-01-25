@@ -139,6 +139,19 @@ const useNotes = () => {
         }
     };
 
+    // MULTIPLE NOTES: FUNCTIONS TO HANDLE ACTION ON MULTIPLE NOTES
+    const deleteBulkNotes = async (id) => {
+        try {
+            const response = await API.delete(`/notes/${id}`);
+            dispatch(deleteNoteReducer(id));
+            toast.success(response.data.message);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return {
         getNotes,
         updateNote,
