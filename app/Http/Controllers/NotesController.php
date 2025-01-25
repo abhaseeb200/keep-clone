@@ -169,4 +169,37 @@ class NotesController extends Controller
         $note->delete();
         return response()->json(['message' => 'Note deleted successfully']);
     }
+
+    
+      /**
+     * Delete multiple items by IDs.
+     */
+    public function deleteBulk(Request $request)
+    {
+        $itemIds = $request->input('item_ids');
+
+        if (!is_array($itemIds) || empty($itemIds)) {
+            return response()->json(['message' => 'Invalid request. Provide an array of item IDs.'], 400);
+        }
+
+        // Find items that exist
+        $items = Item::whereIn('id', $itemIds)->get();
+
+        if ($items->isEmpty()) {
+            return response()->json(['message' => 'No items found to delete.'], 404);
+        }
+
+        // Collect IDs that were found and delete them
+        $deletedCount = Item::whereIn('id', $itemIds)->delete();
+
+        // Determine failed IDs
+        $foundIds = $items->pluck('id')->toArray();
+        $failedIds = array_diff($itemIds, $foundIds);
+
+        return response()->json([
+            'message' => 'Bulk delete operation completed.',
+            'deleted_count' => $deletedCount,
+            'failed_ids' => $failedIds,
+        ], 200);
+    }
 }
