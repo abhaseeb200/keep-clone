@@ -3,8 +3,10 @@ import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import {
     createNoteReducer,
+    deleteBulkNoteReducer,
     deleteNoteReducer,
     getNotesReducer,
+    updateBulkNoteReducer,
     updateNoteReducer,
 } from "@/Features/note/noteSlice";
 import API from "@/Config/api";
@@ -131,7 +133,7 @@ const useNotes = () => {
     const searchNote = async (query) => {
         try {
             const response = await API.get(`/search?query=${query}`);
-            console.log(response.data.data);
+            return response?.data?.data;
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
         } finally {
@@ -139,12 +141,38 @@ const useNotes = () => {
         }
     };
 
-    // MULTIPLE NOTES: FUNCTIONS TO HANDLE ACTION ON MULTIPLE NOTES
-    const deleteBulkNotes = async (id) => {
+    const searchSuggestion = async () => {
         try {
-            const response = await API.delete(`/notes/${id}`);
-            dispatch(deleteNoteReducer(id));
-            toast.success(response.data.message);
+            const response = await API.get(`/search-suggestion/`);
+            return response.data;
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    // MULTIPLE NOTES: FUNCTIONS TO HANDLE ACTION ON MULTIPLE NOTES
+    const deleteBulkNotes = async (ids) => {
+        try {
+            const response = await API.delete(`/notes/`, {
+                data: { item_ids: ids },
+            });
+            dispatch(deleteBulkNoteReducer(ids));
+            toast.success(response?.data?.message);
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const updateBulkNotes = async (ids, body) => {
+        try {
+            const response = await API.put(`/notes/`, { item_ids: ids, ...body });
+            dispatch(updateBulkNoteReducer(response?.data?.data));
+            toast.success(response?.data?.message);
         } catch (error) {
             toast.error(error?.response?.data?.message || error?.message);
         } finally {
@@ -160,6 +188,9 @@ const useNotes = () => {
         deleteNote,
         createNote,
         searchNote,
+        searchSuggestion,
+        deleteBulkNotes,
+        updateBulkNotes,
         isLoading,
     };
 };
