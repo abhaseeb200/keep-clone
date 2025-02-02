@@ -12,6 +12,9 @@ import SignIn from "@/Screens/sign-in";
 import SignUp from "@/Screens/sign-up";
 import ForgotPassword from "@/Screens/forgot-password";
 import Dashboard from "@/Screens/dashboard";
+import Archived from "@/Screens/archived";
+import Labels from "@/Screens/labels";
+import Search from "@/Screens/search";
 
 function App() {
     const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +40,9 @@ function App() {
                     {/* =============== PROTECTED ROUTES =============== */}
                     <Route element={<MainLayout openModal={openModal} />}>
                         <Route path="/dashboard" element={<Dashboard />} />
-                        {/* <Route path="/user" element={<AppTest />} /> */}
+                        <Route path="/archived" element={<Archived />} />
+                        <Route path="/labels/:id" element={<Labels />} />
+                        <Route path="/search" element={<Search />} />
                     </Route>
                 </Routes>
             </Router>
